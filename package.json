@@ -1,0 +1,36 @@
+{
+  "name": "ai-lesson-generator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI lesson plan generator for preschool teachers",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm --workspace backend run dev",
+    "dev:frontend": "npm --workspace frontend run dev",
+    "build": "npm --workspace backend run build && npm --workspace frontend run build",
+    "lint": "npm --workspace backend run lint && npm --workspace frontend run lint",
+    "test": "npm --workspace backend run test && npm --workspace frontend run test",
+    "format": "prettier --write \"backend/src/**/*.{ts,tsx,js,json,md}\" \"frontend/src/**/*.{ts,tsx,js,json,css,md}\" \"*.{md,json}\"",
+    "format:check": "prettier --check \"backend/src/**/*.{ts,tsx,js,json,md}\" \"frontend/src/**/*.{ts,tsx,js,json,css,md}\" \"*.{md,json}\"",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
