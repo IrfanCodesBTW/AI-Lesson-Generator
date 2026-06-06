@@ -229,14 +229,38 @@ T01a → T01b → T01c → T10 → T11 → T12 → T13 → T15 → T19–T21 →
 ## 6. Phase Progress
 
 - [x] Phase 0 — Plan & decisions locked
-- [ ] Phase 1 — Scaffolding (in progress)
-- [ ] Phase 2 — DB & Auth
+- [x] Phase 1 — Scaffolding ✅
+  - [x] T01a Bootstrap tooling (ESLint, Prettier, Vitest, Husky, CI) ✅
+  - [x] T01b Backend scaffold (Express+TS, /health, env, logger) ✅
+  - [x] T01c Frontend scaffold (Vite+React+TS+Tailwind, router, Axios, AuthContext) ✅
+- [ ] Phase 2 — DB & Auth (next)
 - [ ] Phase 3 — Lesson CRUD
 - [ ] Phase 4 — Generator (Gemini + Fallback)
 - [ ] Phase 5 — PDF + Frontend
 - [ ] Phase 6 — Testing
 - [ ] Phase 7 — Deployment
 - [ ] Phase 8 — Docs & Demo
+
+### Phase 1 verification
+
+| Check                                          | Result                                   |
+| ---------------------------------------------- | ---------------------------------------- |
+| Backend `npm run typecheck`                    | ✅ pass                                  |
+| Backend `npm run test`                         | ✅ 3/3 tests pass                        |
+| Backend `npm run build`                        | ✅ emits dist/src/\*                     |
+| Backend `npm start` boots on :4000             | ✅ verified via `tsx src/server.ts`      |
+| `GET /health` returns 200 with gemini status   | ✅ `{"ok":true,...,"gemini":"fallback"}` |
+| `GET /` returns 200 service info               | ✅                                       |
+| `GET /unknown` returns 404 with error envelope | ✅                                       |
+| Frontend `npm run typecheck`                   | ✅ pass                                  |
+| Frontend `npm run test`                        | ✅ 1/1 test pass                         |
+| Frontend `npm run build`                       | ✅ emits dist/\* (205 KB JS, 6.9 KB CSS) |
+| Root `npm run lint`                            | ✅ zero warnings, zero errors            |
+| Root `npm test`                                | ✅ all green                             |
+| Root `npm run build`                           | ✅ both apps build                       |
+| Husky pre-commit installed                     | ✅ `.husky/pre-commit`                   |
+| GitHub Actions CI defined                      | ✅ `.github/workflows/ci.yml`            |
+| Initial commit on main                         | ✅ `8b355b5`                             |
 
 ---
 
