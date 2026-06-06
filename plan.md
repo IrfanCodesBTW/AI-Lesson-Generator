@@ -19,6 +19,11 @@
 | D7  | Coverage target = **≥70% on services, ≥50% overall**.                                                           | User        |
 | D8  | Two separate `package.json` files (backend/, frontend/) for simplicity over workspaces.                         | Plan        |
 | D9  | Tailwind v3 (stable) over v4.                                                                                   | Plan        |
+| D10 | **Local Postgres in Docker for dev/test, Supabase for prod**                                                    | User        |
+| D11 | **Skip RLS for now** (defer to v2) — Express enforces ownership                                                 | User        |
+| D12 | **Install `@supabase/supabase-js`** for future use (admin queries, Storage)                                     | User        |
+| D13 | **Password min length 8, no complexity** (NIST 2024 guidance, teacher-friendly)                                 | User        |
+| D14 | **Supabase region: Mumbai (ap-south-1)**                                                                        | User        |
 
 ### Proposed themes (awaiting user approval)
 
@@ -233,13 +238,35 @@ T01a → T01b → T01c → T10 → T11 → T12 → T13 → T15 → T19–T21 →
   - [x] T01a Bootstrap tooling (ESLint, Prettier, Vitest, Husky, CI) ✅
   - [x] T01b Backend scaffold (Express+TS, /health, env, logger) ✅
   - [x] T01c Frontend scaffold (Vite+React+TS+Tailwind, router, Axios, AuthContext) ✅
-- [ ] Phase 2 — DB & Auth (next)
-- [ ] Phase 3 — Lesson CRUD
+- [x] Phase 2 — DB & Auth ✅
+  - [x] T2.1–T2.16 complete
+  - [x] Supabase env wired; local Postgres via Docker; migrations apply
+  - [x] Custom bcrypt (cost 12) + JWT (HS256, 24h) auth working
+  - [x] 7 auth tests + 3 health tests = 10/10 BE tests green
+  - [x] Coverage on auth.service.ts = 86.3% (target ≥70%)
+- [ ] Phase 3 — Lesson CRUD (next)
 - [ ] Phase 4 — Generator (Gemini + Fallback)
 - [ ] Phase 5 — PDF + Frontend
 - [ ] Phase 6 — Testing
 - [ ] Phase 7 — Deployment
 - [ ] Phase 8 — Docs & Demo
+
+### Phase 2 verification
+
+| Check                                                      | Result                                         |
+| ---------------------------------------------------------- | ---------------------------------------------- |
+| `npm run lint` (BE + FE)                                   | ✅ 0 errors, 0 warnings                        |
+| `npm --workspace backend run typecheck`                    | ✅ clean (after `withClient` fix)              |
+| `npm --workspace frontend run typecheck`                   | ✅ clean                                       |
+| `npm --workspace backend run build`                        | ✅ emits dist/src/\*                           |
+| `npm --workspace backend run test`                         | ✅ 10/10 (3 health + 7 auth)                   |
+| `npm --workspace frontend run test`                        | ✅ 1/1                                         |
+| `npm --workspace backend run test:coverage`                | ✅ auth.service.ts 86.3% lines                 |
+| `docker compose up -d`                                     | ✅ `lesson_pg` healthy on :5433                |
+| `npm run migrate:up`                                       | ✅ both migrations applied to local PG         |
+| `POST /api/auth/register` live smoke                       | ✅ 201, valid JWT, no passwordHash in response |
+| Bcrypt hash spot check (`SELECT password_hash FROM users`) | ✅ `$2a$12$...`, 60 chars                      |
+| Plan.md updated with D10–D14 + Phase 2 status              | ✅                                             |
 
 ### Phase 1 verification
 

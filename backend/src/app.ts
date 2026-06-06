@@ -1,8 +1,10 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { loadEnv } from './config/env';
 import { healthRouter } from './routes/health';
+import { authRouter } from './routes/auth';
 import { errorHandler, notFoundHandler } from './middleware/error';
 import { getLogger } from './lib/logger';
 
@@ -20,18 +22,25 @@ export function createApp(): Application {
   );
   app.use(express.json({ limit: '1mb' }));
 
-  app.use((req, _res, next) => {
+  app.use((req: Request, _res: Response, next: NextFunction) => {
     logger.debug({ method: req.method, url: req.url }, 'request');
     next();
   });
 
+  // Rate limit on auth routes
+  const authLimiter = rateLimit({
+    windowMs: 60_000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: { code: 'RATE_LIMITED', message: 'Too many auth attempts' } },
+  });
+
   app.use('/health', healthRouter);
+  app.use('/api/auth', authLimiter, authRouter);
 
   app.get('/', (_req, res) => {
-    res.json({
-      service: 'ai-lesson-generator-backend',
-      docs: '/health',
-    });
+    res.json({ service: 'ai-lesson-generator-backend', docs: '/health' });
   });
 
   app.use(notFoundHandler);

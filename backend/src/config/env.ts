@@ -14,6 +14,9 @@ const envSchema = z.object({
   GEMINI_MODEL: z.string().default('gemini-1.5-flash'),
   GEMINI_TIMEOUT_MS: z.coerce.number().int().positive().default(8000),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+  SUPABASE_URL: z.string().url().optional(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(20).optional(),
+  DATABASE_DIRECT_URL: z.string().url().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lesson_pg
+    environment:
+      POSTGRES_USER: lesson
+      POSTGRES_PASSWORD: lesson
+      POSTGRES_DB: lesson_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lesson"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  pgdata:
