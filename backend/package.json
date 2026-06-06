@@ -14,10 +14,14 @@
     "lint": "eslint . --ext .ts --max-warnings 0",
     "lint:fix": "eslint . --ext .ts --fix",
     "typecheck": "tsc --noEmit",
-    "migrate": "node-pg-migrate -m migrations -j sql"
+    "migrate": "node-pg-migrate -m migrations --envPath .env",
+    "migrate:up": "npm run migrate up",
+    "migrate:down": "npm run migrate down",
+    "migrate:create": "node-pg-migrate create -m migrations --envPath .env"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "@supabase/supabase-js": "^2.45.4",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -25,6 +29,7 @@
     "express-rate-limit": "^7.4.1",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
+    "node-pg-migrate": "^7.6.1",
     "pdfkit": "^0.15.1",
     "pg": "^8.13.1",
     "pino": "^9.5.0",
