@@ -45,3 +45,20 @@ jobs:
 
       - name: Audit
         run: npm audit --workspaces --audit-level=high || true
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: lint-test-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Trigger Render deploy
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          curl -X POST "$RENDER_DEPLOY_HOOK"
+      - name: Trigger Vercel deploy
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          curl -X POST "$VERCEL_DEPLOY_HOOK"

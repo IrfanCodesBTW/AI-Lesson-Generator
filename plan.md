@@ -2,7 +2,7 @@
 
 > **Project:** Web app for preschool teachers to auto-generate age-appropriate lesson plans via Google Gemini with a rule-based fallback.
 > **Mandated stack (AGENTS.md):** React + Vite + Tailwind + Axios (FE) · Node + Express (BE) · PostgreSQL (DB) · Google Gemini API (AI) · Vercel (FE) + Render (BE).
-> **Status:** Phase 6 complete. Plan is phase-ordered, not date-anchored.
+> **Status:** Phase 7 — Deployment. Plan is phase-ordered, not date-anchored.
 
 ---
 
@@ -300,7 +300,21 @@ T01a → T01b → T01c → T10 → T11 → T12 → T13 → T15 → T19–T21 →
   - [x] T6.9 Color contrast fix: brand-600 darkened (#0284c7→#0369a1) to pass WCAG AA 4.5:1
   - [x] T6.10 Coverage: services 97.49% (≥70%), overall 93.07% (≥50%)
   - [x] T6.11 All 6 root gates green; 9/9 Playwright e2e pass; 91/91 BE tests pass; lint+typecheck+build clean
-- [ ] Phase 7 — Deployment
+
+### Phase 7 — Deployment
+
+> **Goal:** Production-ready app on Render (BE) + Vercel (FE) + Supabase Postgres.
+
+- [ ] T7.1 `vercel.json` — SPA rewrite rules, headers, region
+- [ ] T7.2 `render.yaml` — Blueprint for BE web service (Node 20, start command, health check)
+- [ ] T7.3 Backend production hardening: graceful shutdown, PORT binding, env validation on startup
+- [ ] T7.4 Backend `tsconfig.build.json` — emit source in `dist/` not `dist/src/`
+- [ ] T7.5 CI/CD — add deploy-vercel + deploy-render jobs to GitHub Actions
+- [ ] T7.6 Create Supabase production project, run migrations
+- [ ] T7.7 Deploy BE to Render (env: JWT_SECRET, DATABASE_URL, CORS_ORIGIN, GEMINI_API_KEY, ...)
+- [ ] T7.8 Deploy FE to Vercel (env: VITE_API_BASE pointing to Render URL)
+- [ ] T7.9 Live smoke: register → generate → list → PDF → health check against deployed URLs
+- [ ] T7.10 Deployment README (`DEPLOYMENT.md`) with env checklist, migration commands, rollback steps
 - [ ] Phase 8 — Docs & Demo
 
 ### Phase 6 verification
