@@ -22,6 +22,15 @@ interface UserRow {
   created_at: Date;
 }
 
+function isUniqueViolation(err: unknown): boolean {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'code' in err &&
+    (err as { code?: unknown }).code === '23505'
+  );
+}
+
 export interface AuthResult {
   user: User;
   token: string;
@@ -82,8 +91,7 @@ export async function registerUser(input: {
     const token = signToken(user.id);
     return { user, token };
   } catch (err) {
-    const message = err instanceof Error ? err.message : '';
-    if (message.includes('users_email_key') || message.toLowerCase().includes('duplicate')) {
+    if (isUniqueViolation(err)) {
       throw new ConflictError('Email already registered');
     }
     getLogger().error({ err }, 'registerUser failed');

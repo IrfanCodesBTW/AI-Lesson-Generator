@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import { loadEnv } from './config/env';
 import { healthRouter } from './routes/health';
 import { authRouter } from './routes/auth';
+import { lessonsRouter } from './routes/lessons';
 import { errorHandler, notFoundHandler } from './middleware/error';
 import { getLogger } from './lib/logger';
 
@@ -38,6 +39,7 @@ export function createApp(): Application {
 
   app.use('/health', healthRouter);
   app.use('/api/auth', authLimiter, authRouter);
+  app.use('/api/lessons', lessonsRouter);
 
   app.get('/', (_req, res) => {
     res.json({ service: 'ai-lesson-generator-backend', docs: '/health' });

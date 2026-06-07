@@ -41,20 +41,69 @@ export interface AuthResponse {
   token: string;
 }
 
+export type AgeGroup = '2-3' | '3-4' | '4-5' | '5-6';
+
+export const AGE_GROUPS: AgeGroup[] = ['2-3', '3-4', '4-5', '5-6'];
+
+export const THEMES = [
+  'Animals',
+  'Colors',
+  'Numbers & Counting',
+  'Family & Friends',
+  'Seasons & Weather',
+  'Plants & Gardens',
+  'Transport & Vehicles',
+  'Water & Bubbles',
+  'Shapes',
+  'My Body',
+] as const;
+
+export type Theme = (typeof THEMES)[number];
+
+export interface LessonContent {
+  objective: string;
+  activity: string;
+  rhyme: string;
+  worksheet: string;
+  materials: string[];
+}
+
 export interface Lesson {
   id: string;
   userId: string;
-  ageGroup: '2-3' | '3-4' | '4-5' | '5-6';
+  ageGroup: AgeGroup;
   theme: string;
-  lessonContent: {
-    objective: string;
-    activity: string;
-    rhyme: string;
-    worksheet: string;
-    materials: string[];
-  };
+  lessonContent: LessonContent;
   source: 'gemini' | 'fallback';
   createdAt: string;
+}
+
+export interface LessonListResponse {
+  items: Lesson[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface ApiError {
+  code: string;
+  message: string;
+  details?: unknown;
+}
+
+export function getApiError(err: unknown): ApiError {
+  if (axios.isAxiosError(err)) {
+    const data = err.response?.data as { error?: ApiError } | undefined;
+    if (data?.error) return data.error;
+    return {
+      code: 'NETWORK_ERROR',
+      message: err.message || 'Request failed',
+    };
+  }
+  return {
+    code: 'UNKNOWN',
+    message: err instanceof Error ? err.message : 'Unknown error',
+  };
 }
 
 export async function fetchHealth(): Promise<{
@@ -64,4 +113,47 @@ export async function fetchHealth(): Promise<{
 }> {
   const res = await api.get('/health');
   return res.data;
+}
+
+export async function registerUser(input: {
+  name: string;
+  email: string;
+  password: string;
+}): Promise<AuthResponse> {
+  const res = await api.post('/api/auth/register', input);
+  return res.data;
+}
+
+export async function loginUser(input: { email: string; password: string }): Promise<AuthResponse> {
+  const res = await api.post('/api/auth/login', input);
+  return res.data;
+}
+
+export async function fetchLessons(
+  params: {
+    theme?: string;
+    page?: number;
+    limit?: number;
+  } = {},
+): Promise<LessonListResponse> {
+  const res = await api.get('/api/lessons', { params });
+  return res.data;
+}
+
+export async function fetchLesson(id: string): Promise<Lesson> {
+  const res = await api.get(`/api/lessons/${id}`);
+  return res.data.lesson as Lesson;
+}
+
+export async function deleteLesson(id: string): Promise<void> {
+  await api.delete(`/api/lessons/${id}`);
+}
+
+export async function generateLesson(input: {
+  ageGroup: AgeGroup;
+  theme: string;
+  date?: string;
+}): Promise<Lesson> {
+  const res = await api.post('/api/lessons/generate', input);
+  return res.data.lesson as Lesson;
 }
