@@ -312,10 +312,47 @@ T01a → T01b → T01c → T10 → T11 → T12 → T13 → T15 → T19–T21 →
 - [ ] T7.5 CI/CD — add deploy-vercel + deploy-render jobs to GitHub Actions
 - [ ] T7.6 Create Supabase production project, run migrations
 - [ ] T7.7 Deploy BE to Render (env: JWT_SECRET, DATABASE_URL, CORS_ORIGIN, GEMINI_API_KEY, ...)
-- [ ] T7.8 Deploy FE to Vercel (env: VITE_API_BASE pointing to Render URL)
-- [ ] T7.9 Live smoke: register → generate → list → PDF → health check against deployed URLs
-- [ ] T7.10 Deployment README (`DEPLOYMENT.md`) with env checklist, migration commands, rollback steps
+- [x] T7.1 `vercel.json` — SPA rewrite rules, headers, region
+- [x] T7.2 `render.yaml` — Blueprint for BE web service (Node 20, start command, health check) [superseded by Railway]
+- [x] T7.3 Backend production hardening: graceful shutdown, PORT binding, env validation on startup
+- [x] T7.4 Backend `tsconfig.build.json` — emit source in `dist/` not `dist/src/`
+- [x] T7.5 CI/CD — add deploy-vercel + deploy-render jobs to GitHub Actions
+- [x] T7.6 ~~Create Supabase production project, run migrations~~ — replaced by Railway Postgres
+- [x] T7.7 ~~Deploy BE to Render~~ — replaced by Railway (Supabase is IPv6-only, Render free tier can't reach)
+- [x] T7.8 Deploy FE to Vercel (env: VITE_API_BASE → Railway URL)
+- [x] T7.9 Live smoke: register → generate → list → PDF → health check against deployed URLs
+- [x] T7.10 Deployment README (`DEPLOYMENT.md`) with env checklist, migration commands, rollback steps
 - [ ] Phase 8 — Docs & Demo
+
+### Phase 7 verification
+
+| Check                                            | Result                                                                                                                                                                                       |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vercel.json` SPA rewrite + headers              | ✅ deployed at `https://ai-lesson-generator-hazel.vercel.app`                                                                                                                                |
+| Railway project + Postgres + Web Service created | ✅ `ai-lesson-generator` (project `8e730a0c-33ad-4c3b-afee-61430bcc4818`)                                                                                                                    |
+| Railway env vars (9 total)                       | ✅ JWT_SECRET, JWT_EXPIRES_IN, GEMINI_API_KEY, GEMINI_MODEL, GEMINI_TIMEOUT_MS, NODE_ENV, CORS_ORIGIN, LOG_LEVEL, DATABASE_URL (`${{Postgres.DATABASE_URL}}`)                                |
+| Railway migrations run on startup                | ✅ `runMigrations('up')` called before `app.listen` when `NODE_ENV=production`; logs show `MIGRATION 1730000000000_create_users (UP)` and `MIGRATION 1730000000001_create_lesson_plans (UP)` |
+| `GET /health` live                               | ✅ 200, `{"ok":true,"service":"ai-lesson-generator-backend","version":"0.1.0","uptime":...,"gemini":"configured"}`                                                                           |
+| `POST /api/auth/register` live                   | ✅ 201, returns `{user, token}` with bcrypt hash stored                                                                                                                                      |
+| `POST /api/auth/login` live                      | ✅ 200, returns `{user, token}`                                                                                                                                                              |
+| `POST /api/lessons/generate` live                | ✅ 201, `source=fallback` (Gemini API reachable but chose fallback due to demo key)                                                                                                          |
+| `GET /api/lessons` live                          | ✅ 200, paginated list, ownership filter enforced                                                                                                                                            |
+| `GET /api/lessons/:id` live                      | ✅ 200, returns lesson with content                                                                                                                                                          |
+| `GET /api/export/pdf/:id` live                   | ✅ 200, `application/pdf`, ~2.5KB                                                                                                                                                            |
+| `DELETE /api/lessons/:id` live                   | ✅ 204                                                                                                                                                                                       |
+| CORS preflight from Vercel origin                | ✅ 204, `Access-Control-Allow-Origin: https://ai-lesson-generator-hazel.vercel.app`                                                                                                          |
+| Vercel `VITE_API_BASE` updated to Railway URL    | ✅ env var `EXzBVoR84MZ9g6At` patched; new bundle `index-xmW1cmVH.js` contains `backend-production-ab33b`                                                                                    |
+| Vercel MCP server added to opencode config       | ✅ token in `~/.config/opencode/opencode.jsonc`                                                                                                                                              |
+| `DEPLOYMENT.md` updated for Railway              | ✅ reflects new architecture; Render/Supabase removed                                                                                                                                        |
+| `CLEANUP.md` for orphaned Render + Supabase      | ✅ documents manual dashboard steps                                                                                                                                                          |
+| Render + Supabase orphan services                | ⚠ free tier, $0 cost; manual deletion required (see CLEANUP.md)                                                                                                                              |
+| Plan.md updated with Phase 7 status              | ✅                                                                                                                                                                                           |
+
+**Live URLs**
+
+- Frontend (Vercel): `https://ai-lesson-generator-hazel.vercel.app`
+- Backend (Railway): `https://backend-production-ab33b.up.railway.app`
+- Health: `https://backend-production-ab33b.up.railway.app/health`
 
 ### Phase 6 verification
 
