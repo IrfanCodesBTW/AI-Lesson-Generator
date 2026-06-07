@@ -13,10 +13,10 @@ test.describe('Happy path', () => {
     await page.fill('#password', password);
     await page.click('button[type="submit"]');
     await page.waitForURL('/dashboard');
-    await expect(page.locator('h1')).toHaveText('Dashboard');
+    await expect(page.locator('h1')).toHaveText('Teacher Dashboard');
 
     // Wait for initial lesson list load
-    await page.waitForSelector('h2:has-text("Generate a new lesson")');
+    await page.waitForSelector('h2:has-text("Quick Generate")');
 
     // 2. Generate lesson
     await page.selectOption('#age', '4-5');
@@ -31,7 +31,7 @@ test.describe('Happy path', () => {
     await expect(page.locator('h2:has-text("Rhyme")')).toBeVisible();
     await expect(page.locator('h2:has-text("Worksheet Idea")')).toBeVisible();
     await expect(page.locator('h2:has-text("Materials Required")')).toBeVisible();
-    await expect(page.locator('text=Template')).toBeVisible();
+    await expect(page.locator('span:text-is("Template")')).toBeVisible();
 
     // 4. Export PDF — intercept download
     const [download] = await Promise.all([
@@ -43,7 +43,7 @@ test.describe('Happy path', () => {
     // 5. Navigate back to dashboard
     await page.click('a:has-text("Back")');
     await page.waitForURL('/dashboard');
-    await page.waitForSelector('h2:has-text("Generate a new lesson")');
+    await page.waitForSelector('h2:has-text("Quick Generate")');
 
     // Wait for lesson list item to appear
     await expect(page.getByRole('link', { name: /Animals/ })).toBeVisible({ timeout: 10_000 });

@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { AuthProvider } from '../src/context/AuthContext';
 import { HomePage } from '../src/pages/HomePage';
-import { vi } from 'vitest';
 
 vi.mock('../src/lib/api', () => ({
   fetchHealth: vi.fn().mockResolvedValue({ ok: true, service: 'test', gemini: 'fallback' }),
@@ -9,8 +10,14 @@ vi.mock('../src/lib/api', () => ({
 
 describe('HomePage', () => {
   it('renders welcome heading and shows backend status', async () => {
-    render(<HomePage />);
-    expect(screen.getByRole('heading', { name: /welcome/i })).toBeInTheDocument();
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <HomePage />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('heading', { name: /generate preschool/i })).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getByText(/online/i)).toBeInTheDocument();
     });

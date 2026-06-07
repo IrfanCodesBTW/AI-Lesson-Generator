@@ -5,7 +5,7 @@ import { uniqueEmail, uniqueName } from './fixtures/auth';
 test.describe('Accessibility', () => {
   test('Home page has no serious or critical violations', async ({ page }) => {
     await page.goto('/');
-    await page.waitForSelector('h2:has-text("Welcome")');
+    await page.waitForSelector('h2:has-text("System Connection Status")');
     const results = await new AxeBuilder({ page }).analyze();
     expect(
       results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious'),
