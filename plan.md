@@ -2,7 +2,7 @@
 
 > **Project:** Web app for preschool teachers to auto-generate age-appropriate lesson plans via Google Gemini with a rule-based fallback.
 > **Mandated stack (AGENTS.md):** React + Vite + Tailwind + Axios (FE) · Node + Express (BE) · PostgreSQL (DB) · Google Gemini API (AI) · Vercel (FE) + Render (BE).
-> **Status:** Phase 1 — Scaffolding. Plan is phase-ordered, not date-anchored.
+> **Status:** Phase 3 — Lesson CRUD. Plan is phase-ordered, not date-anchored.
 
 ---
 
@@ -244,12 +244,45 @@ T01a → T01b → T01c → T10 → T11 → T12 → T13 → T15 → T19–T21 →
   - [x] Custom bcrypt (cost 12) + JWT (HS256, 24h) auth working
   - [x] 7 auth tests + 3 health tests = 10/10 BE tests green
   - [x] Coverage on auth.service.ts = 86.3% (target ≥70%)
-- [ ] Phase 3 — Lesson CRUD (next)
+- [x] Phase 3 — Lesson CRUD ✅
+  - [x] T3.1 Schema (Zod: createLesson, listLessons, ageGroup/source enums)
+  - [x] T3.2 Service (listLessons with theme+page+limit, getLesson, deleteLesson, createLesson — all owner-scoped)
+  - [x] T3.3 Routes (`POST /api/lessons/generate`, `GET /api/lessons`, `GET /api/lessons/:id`, `DELETE /api/lessons/:id`)
+  - [x] T3.4 Generator orchestrator stub (returns hardcoded fallback content; replaced in Phase 4)
+  - [x] T3.5 Mount `/api/lessons` behind `requireAuth` in `app.ts`
+  - [x] T3.6 8 integration tests (list empty, 401 unauth, create+persist, 400 bad age, paginated list + theme filter, 404 cross-user, 204 delete, 404 delete cross-user)
+  - [x] T3.7 FE: lib/api.ts (Lesson, LessonContent, AGE_GROUPS, THEMES, registerUser, loginUser, fetchLessons, fetchLesson, deleteLesson, generateLesson, getApiError)
+  - [x] T3.8 FE: LoginPage, RegisterPage, DashboardPage (list+filter+generate+delete), LessonDetailPage, RequireAuth guard
+  - [x] T3.9 FE: App.tsx full route table + nav with logout
+  - [x] T3.10 FE: 2 LoginPage tests (success + error)
+  - [x] T3.11 BE: 18/18 tests; FE: 3/3 tests; all 3 gates green on both
+  - [x] T3.12 Coverage: lesson.service 100% lines, auth.service 93.67%, overall 87.7%
+  - [x] T3.13 Bug fix: duplicate-email detection now uses Postgres error code 23505 (was message text)
+  - [x] T3.14 Bug fix: vitest `fileParallelism: false` for shared-DB test isolation
 - [ ] Phase 4 — Generator (Gemini + Fallback)
 - [ ] Phase 5 — PDF + Frontend
 - [ ] Phase 6 — Testing
 - [ ] Phase 7 — Deployment
 - [ ] Phase 8 — Docs & Demo
+
+### Phase 3 verification
+
+| Check                                            | Result                                      |
+| ------------------------------------------------ | ------------------------------------------- |
+| `npm run lint` (BE + FE)                         | ✅ 0 errors, 0 warnings                     |
+| `npm --workspace backend run typecheck`          | ✅ clean                                    |
+| `npm --workspace frontend run typecheck`         | ✅ clean                                    |
+| `npm --workspace backend run build`              | ✅ emits `dist/src/*`                       |
+| `npm --workspace frontend run build`             | ✅ emits `dist/index.html` + 222KB JS       |
+| `npm --workspace backend run test`               | ✅ 18/18 (3 health + 7 auth + 8 lessons)    |
+| `npm --workspace frontend run test`              | ✅ 3/3 (1 HomePage + 2 LoginPage)           |
+| `npm --workspace backend run test:coverage`      | ✅ lesson.service 100% lines, overall 87.7% |
+| `POST /api/lessons/generate` live smoke          | ✅ 201, lesson persisted, source=`fallback` |
+| `GET /api/lessons?theme=Animals` live smoke      | ✅ 200, ILIKE filter works                  |
+| `GET /api/lessons/:id` cross-user 404            | ✅ ownership enforced                       |
+| `DELETE /api/lessons/:id` own = 204, cross = 404 | ✅                                          |
+| Bcrypt `$2a$12$...` spot check                   | ✅ Phase 2 still passing                    |
+| Plan.md updated with Phase 3 status              | ✅                                          |
 
 ### Phase 2 verification
 
