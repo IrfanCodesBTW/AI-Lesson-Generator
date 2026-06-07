@@ -2,7 +2,7 @@
 
 > **Project:** Web app for preschool teachers to auto-generate age-appropriate lesson plans via Google Gemini with a rule-based fallback.
 > **Mandated stack (AGENTS.md):** React + Vite + Tailwind + Axios (FE) · Node + Express (BE) · PostgreSQL (DB) · Google Gemini API (AI) · Vercel (FE) + Render (BE).
-> **Status:** Phase 4 — Generator (Gemini + Fallback). Plan is phase-ordered, not date-anchored.
+> **Status:** Phase 5 — PDF Export + Frontend Polish. Plan is phase-ordered, not date-anchored.
 
 ---
 
@@ -273,11 +273,42 @@ T01a → T01b → T01c → T10 → T11 → T12 → T13 → T15 → T19–T21 →
   - [x] T4.11 Coverage: gemini.client 98.18%, fallback.templates 99.10%, orchestrator 95.23%, overall 92.62%
   - [x] T4.12 Live smoke: 20ms response, source=fallback, correct content for Animals/4-5
   - [x] T4.13 .env.example updated with section comments and fallback-mode instructions
-- [ ] Phase 4 — Generator (Gemini + Fallback) ✅
-- [ ] Phase 5 — PDF + Frontend
+- [x] Phase 5 — PDF + Frontend ✅
+  - [x] T5.1 `pdf.service.ts` — pdfkit A4 stream, 50px margins, structured title/meta/5 sections/footer
+  - [x] T5.2 `routes/export.ts` — `GET /api/export/pdf/:id` behind `requireAuth`, owner-scoped via `getLesson`
+  - [x] T5.3 Filename pattern `lesson-<slug>-<YYYY-MM-DD>.pdf`; pdfkit stream piped to `res`
+  - [x] T5.4 5 pdf.test.ts integration cases (401, 200+`%PDF`, 404 cross-user, 404 non-existent, filename pattern)
+  - [x] T5.5 `lib/api.ts` adds `downloadLessonPdf(id, suggestedFilename)` — blob + object URL + programmatic `<a>` click
+  - [x] T5.6 `hooks/useLessons.ts` — `{ items, total, loading, generating, deletingId, error }` + `load(theme?)` + `generate(input)` + `remove(id)` (optimistic) + `clearError()`
+  - [x] T5.7 `DashboardPage` refactored to use `useLessons`; `SourceBadge` component (violet=AI, amber=Template)
+  - [x] T5.8 `LessonDetailPage` refactored to use `downloadLessonPdf` (blob, no `window.open` token leak); shows source badge; "Preparing…" download state
+  - [x] T5.9 6 `useLessons.test.ts` cases (load, theme param, error capture, generate success, generate failure, optimistic remove)
+  - [x] T5.10 Live smoke: register → generate → download → 2566 bytes, `%PDF` magic, correct filename
+  - [x] T5.11 All 6 root gates green (lint, test, build BE+FE, typecheck BE+FE)
+  - [x] T5.12 Coverage: `pdf.service` 90.58%, services overall 97.47%
+- [x] Phase 4 — Generator (Gemini + Fallback) ✅
+- [x] Phase 5 — PDF + Frontend ✅
 - [ ] Phase 6 — Testing
 - [ ] Phase 7 — Deployment
 - [ ] Phase 8 — Docs & Demo
+
+### Phase 5 verification
+
+| Check                                       | Result                                                                                                                                            |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run lint` (BE + FE)                    | ✅ 0 errors, 0 warnings                                                                                                                           |
+| `npm --workspace backend run typecheck`     | ✅ clean                                                                                                                                          |
+| `npm --workspace frontend run typecheck`    | ✅ clean                                                                                                                                          |
+| `npm --workspace backend run build`         | ✅ emits `dist/src/*`                                                                                                                             |
+| `npm --workspace frontend run build`        | ✅ emits `dist/index.html` + 223KB JS                                                                                                             |
+| `npm --workspace backend run test`          | ✅ 83/83 (3 health + 7 auth + 8 lessons + 7 gemini + 47 fallback + 6 integration + 5 pdf)                                                         |
+| `npm --workspace frontend run test`         | ✅ 9/9 (1 HomePage + 2 LoginPage + 6 useLessons)                                                                                                  |
+| `npm --workspace backend run test:coverage` | ✅ pdf.service 90.58%, services overall 97.47%                                                                                                    |
+| `GET /api/export/pdf/:id` live smoke        | ✅ 200 OK, 2566 bytes, `Content-Type: application/pdf`, `Content-Disposition: attachment; filename="lesson-animals-2026-06-07.pdf"`, magic `%PDF` |
+| `GET /api/export/pdf/:id` auth=401          | ✅ no token → 401                                                                                                                                 |
+| `GET /api/export/pdf/:id` cross-user=404    | ✅ ownership enforced                                                                                                                             |
+| `GET /api/export/pdf/:id` non-existent=404  | ✅ 404                                                                                                                                            |
+| Plan.md updated with Phase 5 status         | ✅                                                                                                                                                |
 
 ### Phase 4 verification
 
