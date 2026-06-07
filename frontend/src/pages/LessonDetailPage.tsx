@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { fetchLesson, getApiError, Lesson } from '../lib/api';
+import { downloadLessonPdf, fetchLesson, getApiError, Lesson } from '../lib/api';
 
 export function LessonDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -17,12 +18,18 @@ export function LessonDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  function handlePdf() {
-    if (!id) return;
-    const token = localStorage.getItem('token');
-    const apiBase = import.meta.env.VITE_API_BASE ?? '';
-    const url = `${apiBase}/api/export/pdf/${id}${token ? `?token=${encodeURIComponent(token)}` : ''}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+  async function handlePdf() {
+    if (!id || !lesson) return;
+    setDownloading(true);
+    setError(null);
+    try {
+      const filename = `lesson-${lesson.theme.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${lesson.createdAt.slice(0, 10)}.pdf`;
+      await downloadLessonPdf(id, filename);
+    } catch (err) {
+      setError(getApiError(err).message);
+    } finally {
+      setDownloading(false);
+    }
   }
 
   if (loading) return <p className="text-sm text-gray-500">Loading…</p>;
@@ -40,16 +47,25 @@ export function LessonDetailPage() {
   if (!lesson) return null;
 
   const c = lesson.lessonContent;
+  const sourceLabel = lesson.source === 'gemini' ? 'AI-generated' : 'Template';
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{lesson.theme}</h1>
-          <p className="text-sm text-gray-600">
-            Ages {lesson.ageGroup} · {new Date(lesson.createdAt).toLocaleString()} ·{' '}
-            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs uppercase tracking-wide text-gray-700">
-              {lesson.source}
+          <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-600">
+            <span>Ages {lesson.ageGroup}</span>
+            <span>·</span>
+            <span>{new Date(lesson.createdAt).toLocaleString()}</span>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                lesson.source === 'gemini'
+                  ? 'bg-violet-100 text-violet-700'
+                  : 'bg-amber-100 text-amber-700'
+              }`}
+            >
+              {sourceLabel}
             </span>
           </p>
         </div>
@@ -57,8 +73,8 @@ export function LessonDetailPage() {
           <Link to="/dashboard" className="btn-secondary">
             Back
           </Link>
-          <button type="button" className="btn-primary" onClick={handlePdf}>
-            Export PDF
+          <button type="button" className="btn-primary" onClick={handlePdf} disabled={downloading}>
+            {downloading ? 'Preparing…' : 'Export PDF'}
           </button>
         </div>
       </div>

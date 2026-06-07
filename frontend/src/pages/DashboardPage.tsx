@@ -1,76 +1,31 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import {
-  AGE_GROUPS,
-  AgeGroup,
-  deleteLesson,
-  fetchLessons,
-  generateLesson,
-  getApiError,
-  Lesson,
-  THEMES,
-  Theme,
-} from '../lib/api';
+import { useLessons } from '../hooks/useLessons';
+import { AGE_GROUPS, AgeGroup, THEMES, Theme } from '../lib/api';
 
 export function DashboardPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [items, setItems] = useState<Lesson[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const lessons = useLessons();
   const [filter, setFilter] = useState('');
   const [age, setAge] = useState<AgeGroup>('4-5');
   const [theme, setTheme] = useState<Theme>('Animals');
-  const [generating, setGenerating] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  async function load() {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetchLessons(filter ? { theme: filter } : undefined);
-      setItems(res.items);
-      setTotal(res.total);
-    } catch (err) {
-      setError(getApiError(err).message);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   useEffect(() => {
-    void load();
+    void lessons.load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleGenerate(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setGenerating(true);
-    setError(null);
-    try {
-      const lesson = await generateLesson({ ageGroup: age, theme });
-      navigate(`/lessons/${lesson.id}`);
-    } catch (err) {
-      setError(getApiError(err).message);
-    } finally {
-      setGenerating(false);
-    }
+    const lesson = await lessons.generate({ ageGroup: age, theme });
+    if (lesson) navigate(`/lessons/${lesson.id}`);
   }
 
   async function handleDelete(id: string) {
     if (!confirm('Delete this lesson? This cannot be undone.')) return;
-    setDeletingId(id);
-    setError(null);
-    try {
-      await deleteLesson(id);
-      await load();
-    } catch (err) {
-      setError(getApiError(err).message);
-    } finally {
-      setDeletingId(null);
-    }
+    await lessons.remove(id);
   }
 
   return (
@@ -130,14 +85,14 @@ export function DashboardPage() {
             </select>
           </div>
           <div className="flex items-end">
-            <button type="submit" className="btn-primary w-full" disabled={generating}>
-              {generating ? 'Generating…' : 'Generate'}
+            <button type="submit" className="btn-primary w-full" disabled={lessons.generating}>
+              {lessons.generating ? 'Generating…' : 'Generate'}
             </button>
           </div>
         </form>
-        {error && (
+        {lessons.error && (
           <div role="alert" className="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
-            {error}
+            {lessons.error}
           </div>
         )}
       </section>
@@ -145,7 +100,8 @@ export function DashboardPage() {
       <section>
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="text-lg font-semibold">
-            Your lessons <span className="text-sm font-normal text-gray-500">({total})</span>
+            Your lessons{' '}
+            <span className="text-sm font-normal text-gray-500">({lessons.total})</span>
           </h2>
           <div className="flex items-center gap-2">
             <label htmlFor="filter" className="sr-only">
@@ -159,38 +115,45 @@ export function DashboardPage() {
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') void load();
+                if (e.key === 'Enter') void lessons.load(filter);
               }}
             />
-            <button type="button" className="btn-secondary" onClick={() => void load()}>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => void lessons.load(filter)}
+            >
               Search
             </button>
           </div>
         </div>
 
-        {loading ? (
+        {lessons.loading ? (
           <p className="text-sm text-gray-500">Loading…</p>
-        ) : items.length === 0 ? (
+        ) : lessons.items.length === 0 ? (
           <div className="card text-center text-sm text-gray-500">
             No lessons yet. Generate your first one above.
           </div>
         ) : (
           <ul className="space-y-3">
-            {items.map((lesson) => (
+            {lessons.items.map((lesson) => (
               <li key={lesson.id} className="card flex items-center justify-between gap-4">
                 <Link to={`/lessons/${lesson.id}`} className="flex-1 min-w-0">
                   <div className="font-semibold text-gray-900">{lesson.theme}</div>
-                  <div className="text-xs text-gray-500">
-                    Ages {lesson.ageGroup} · {new Date(lesson.createdAt).toLocaleString()}
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <span>Ages {lesson.ageGroup}</span>
+                    <span>·</span>
+                    <span>{new Date(lesson.createdAt).toLocaleString()}</span>
+                    <SourceBadge source={lesson.source} />
                   </div>
                 </Link>
                 <button
                   type="button"
                   className="text-sm font-medium text-red-600 hover:underline disabled:opacity-50"
-                  disabled={deletingId === lesson.id}
+                  disabled={lessons.deletingId === lesson.id}
                   onClick={() => void handleDelete(lesson.id)}
                 >
-                  {deletingId === lesson.id ? 'Deleting…' : 'Delete'}
+                  {lessons.deletingId === lesson.id ? 'Deleting…' : 'Delete'}
                 </button>
               </li>
             ))}
@@ -198,5 +161,17 @@ export function DashboardPage() {
         )}
       </section>
     </div>
+  );
+}
+
+function SourceBadge({ source }: { source: 'gemini' | 'fallback' }) {
+  const label = source === 'gemini' ? 'AI' : 'Template';
+  const cls = source === 'gemini' ? 'bg-violet-100 text-violet-700' : 'bg-amber-100 text-amber-700';
+  return (
+    <span
+      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${cls}`}
+    >
+      {label}
+    </span>
   );
 }

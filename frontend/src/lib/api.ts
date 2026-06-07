@@ -157,3 +157,17 @@ export async function generateLesson(input: {
   const res = await api.post('/api/lessons/generate', input);
   return res.data.lesson as Lesson;
 }
+
+export async function downloadLessonPdf(id: string, suggestedFilename: string): Promise<void> {
+  const res = await api.get(`/api/export/pdf/${id}`, { responseType: 'blob' });
+  const blob = new Blob([res.data], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = suggestedFilename;
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
