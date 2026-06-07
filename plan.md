@@ -2,7 +2,7 @@
 
 > **Project:** Web app for preschool teachers to auto-generate age-appropriate lesson plans via Google Gemini with a rule-based fallback.
 > **Mandated stack (AGENTS.md):** React + Vite + Tailwind + Axios (FE) · Node + Express (BE) · PostgreSQL (DB) · Google Gemini API (AI) · Vercel (FE) + Render (BE).
-> **Status:** Phase 3 — Lesson CRUD. Plan is phase-ordered, not date-anchored.
+> **Status:** Phase 4 — Generator (Gemini + Fallback). Plan is phase-ordered, not date-anchored.
 
 ---
 
@@ -259,11 +259,46 @@ T01a → T01b → T01c → T10 → T11 → T12 → T13 → T15 → T19–T21 →
   - [x] T3.12 Coverage: lesson.service 100% lines, auth.service 93.67%, overall 87.7%
   - [x] T3.13 Bug fix: duplicate-email detection now uses Postgres error code 23505 (was message text)
   - [x] T3.14 Bug fix: vitest `fileParallelism: false` for shared-DB test isolation
-- [ ] Phase 4 — Generator (Gemini + Fallback)
+- [x] Phase 4 — Generator (Gemini + Fallback) ✅
+  - [x] T4.1 Split orchestrator into gemini.client + fallback.templates + orchestrator
+  - [x] T4.2 Gemini client: `@google/generative-ai`, responseSchema, Promise.race timeout, Zod validation, typed errors
+  - [x] T4.3 10 theme profiles × 4 age bands = 40 authored templates (Animals, Colors, Numbers & Counting, Family & Friends, Seasons & Weather, Plants & Gardens, Transport & Vehicles, Water & Bubbles, Shapes, My Body)
+  - [x] T4.4 Generic default profile for unknown themes
+  - [x] T4.5 Orchestrator: try Gemini, on any failure fall back, log reason, never silently fail
+  - [x] T4.6 Exported `AgeGroup` type from schemas
+  - [x] T4.7 7 gemini.client tests (success, no key, bad JSON, wrong shape, network throw, timeout, custom model)
+  - [x] T4.8 47 fallback.templates tests (ageBand mapping, 11 themes × 4 ages, age variation, unknown theme)
+  - [x] T4.9 6 generator.integration tests (gemini success, no key fallback, bad JSON, wrong shape, SDK throw, <10s SLA)
+  - [x] T4.10 BE: 78/78 tests; all 3 gates green
+  - [x] T4.11 Coverage: gemini.client 98.18%, fallback.templates 99.10%, orchestrator 95.23%, overall 92.62%
+  - [x] T4.12 Live smoke: 20ms response, source=fallback, correct content for Animals/4-5
+  - [x] T4.13 .env.example updated with section comments and fallback-mode instructions
+- [ ] Phase 4 — Generator (Gemini + Fallback) ✅
 - [ ] Phase 5 — PDF + Frontend
 - [ ] Phase 6 — Testing
 - [ ] Phase 7 — Deployment
 - [ ] Phase 8 — Docs & Demo
+
+### Phase 4 verification
+
+| Check                                       | Result                                                                            |
+| ------------------------------------------- | --------------------------------------------------------------------------------- |
+| `npm run lint` (BE + FE)                    | ✅ 0 errors, 0 warnings                                                           |
+| `npm --workspace backend run typecheck`     | ✅ clean                                                                          |
+| `npm --workspace frontend run typecheck`    | ✅ clean                                                                          |
+| `npm --workspace backend run build`         | ✅ emits `dist/src/*`                                                             |
+| `npm --workspace frontend run build`        | ✅ emits `dist/index.html` + 222KB JS                                             |
+| `npm --workspace backend run test`          | ✅ 78/78 (3 health + 7 auth + 8 lessons + 7 gemini + 47 fallback + 6 integration) |
+| `npm --workspace frontend run test`         | ✅ 3/3                                                                            |
+| `npm --workspace backend run test:coverage` | ✅ gemini 98.18%, fallback 99.10%, orchestrator 95.23%, overall 92.62%            |
+| Gemini happy path (mocked)                  | ✅ `source=gemini`, content = mocked JSON                                         |
+| Gemini no API key → fallback                | ✅ `source=fallback`, template content                                            |
+| Gemini bad JSON → fallback                  | ✅ `source=fallback`                                                              |
+| Gemini wrong shape → fallback               | ✅ `source=fallback`                                                              |
+| Gemini SDK throw → fallback                 | ✅ `source=fallback`                                                              |
+| End-to-end SLA <10s                         | ✅ 20ms in local smoke                                                            |
+| Live HTTP smoke (Animals/4-5)               | ✅ correct 4-5 age-band content                                                   |
+| Plan.md updated                             | ✅                                                                                |
 
 ### Phase 3 verification
 
