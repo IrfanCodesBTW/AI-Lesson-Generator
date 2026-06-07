@@ -34,7 +34,7 @@ no API key, no network, or Gemini downtime.
 | PDF      | pdfkit                                                                               |
 | Tests    | Vitest (unit + integration + perf + security smoke), Playwright (E2E + a11y via axe) |
 | Tooling  | ESLint, Prettier, Husky, lint-staged, GitHub Actions CI                              |
-| Deploy   | Vercel (frontend), Render (backend)                                                  |
+| Deploy   | Vercel (frontend), Railway (backend + database)                                      |
 
 ## Project structure
 
@@ -60,7 +60,6 @@ no API key, no network, or Gemini downtime.
 │   ├── e2e/                Playwright specs (happy path, auth guard, ownership, a11y)
 │   └── tests/              Vitest + Testing Library
 ├── docker-compose.yml      Local Postgres on port 5433
-├── render.yaml             Render Blueprint for the backend
 ├── .github/workflows/      CI (lint + typecheck + test)
 └── DEPLOYMENT.md           Step-by-step deploy guide
 ```
@@ -259,19 +258,12 @@ npx playwright test --config frontend/playwright.config.ts
 
 The production target is:
 
-- Frontend — Vercel, root directory `frontend`, build `npm run build`,
-  output `dist`.
-- Backend — Render, defined in `render.yaml`, root directory `backend`,
-  build `npm install && npm run build`, start `node dist/server.js`.
-  Migrations run automatically on startup.
-- Database — managed Postgres (Supabase is the example target). Render
-  references `DATABASE_URL` and `DATABASE_DIRECT_URL`.
+- Frontend — Vercel, root directory `frontend`, build `npm run build`, output `dist`.
+- Backend & Database — Railway, root directory `backend`, build `npm install && npm run build`, start `npm start`. Migrations run automatically on startup.
 
-Set `CORS_ORIGIN` on the backend to the deployed Vercel URL. The
-frontend reads `VITE_API_BASE` at build time.
+The backend service is linked to a managed PostgreSQL database service on Railway, with env variables mapped accordingly. The frontend reads `VITE_API_BASE` at build time to communicate with the Railway API.
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for the full step-by-step, including
-environment variables, smoke tests, and how to rotate the Gemini key.
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for the full step-by-step, including environment variables, smoke tests, and how to rotate the Gemini key.
 
 ## Linting, formatting, and hooks
 
