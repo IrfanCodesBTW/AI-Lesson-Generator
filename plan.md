@@ -2,7 +2,7 @@
 
 > **Project:** Web app for preschool teachers to auto-generate age-appropriate lesson plans via Google Gemini with a rule-based fallback.
 > **Mandated stack (AGENTS.md):** React + Vite + Tailwind + Axios (FE) · Node + Express (BE) · PostgreSQL (DB) · Google Gemini API (AI) · Vercel (FE) + Render (BE).
-> **Status:** Phase 5 — PDF Export + Frontend Polish. Plan is phase-ordered, not date-anchored.
+> **Status:** Phase 6 complete. Plan is phase-ordered, not date-anchored.
 
 ---
 
@@ -288,9 +288,40 @@ T01a → T01b → T01c → T10 → T11 → T12 → T13 → T15 → T19–T21 →
   - [x] T5.12 Coverage: `pdf.service` 90.58%, services overall 97.47%
 - [x] Phase 4 — Generator (Gemini + Fallback) ✅
 - [x] Phase 5 — PDF + Frontend ✅
-- [ ] Phase 6 — Testing
+- [x] Phase 6 — Testing ✅
+  - [x] T6.1 Install Playwright + @axe-core/playwright in `frontend/`
+  - [x] T6.2 `playwright.config.ts` with chromium-only, `webServer` boots BE + FE preview
+  - [x] T6.3 E2E happy path: register → generate → list → detail → PDF download → delete
+  - [x] T6.4 E2E ownership: register 2 users, B cannot see A's lesson (404)
+  - [x] T6.5 E2E auth guard: anonymous `/dashboard` redirects to `/login`
+  - [x] T6.6 A11y axe-core scan on Home, Login, Register, Dashboard, Detail — 0 serious/critical violations
+  - [x] T6.7 BE security smokes (supertest): SQLi in theme filter, malformed/expired JWT 401, CORS blocked, body size limit
+  - [x] T6.8 BE perf smoke: 50 parallel `/api/lessons/generate` all complete <10s; `/api/export/pdf/:id` p95 <2s
+  - [x] T6.9 Color contrast fix: brand-600 darkened (#0284c7→#0369a1) to pass WCAG AA 4.5:1
+  - [x] T6.10 Coverage: services 97.49% (≥70%), overall 93.07% (≥50%)
+  - [x] T6.11 All 6 root gates green; 9/9 Playwright e2e pass; 91/91 BE tests pass; lint+typecheck+build clean
 - [ ] Phase 7 — Deployment
 - [ ] Phase 8 — Docs & Demo
+
+### Phase 6 verification
+
+| Check                                         | Result                                                         |
+| --------------------------------------------- | -------------------------------------------------------------- |
+| `npm run lint` (BE + FE)                      | ✅ 0 errors, 0 warnings                                        |
+| `npm --workspace backend run typecheck`       | ✅ clean                                                       |
+| `npm --workspace frontend run typecheck`      | ✅ clean                                                       |
+| `npm --workspace backend run build`           | ✅ emits `dist/src/*`                                          |
+| `npm --workspace frontend run build`          | ✅ emits `dist/index.html` + 223KB JS                          |
+| `npm --workspace backend run test`            | ✅ 91/91 (9 files incl. security.smoke + perf.smoke)           |
+| `npm --workspace frontend run test`           | ✅ 9/9                                                         |
+| `npm --workspace backend run test:coverage`   | ✅ services 97.49%, overall 93.07%                             |
+| Playwright e2e (9 tests)                      | ✅ 9/9: happy-path, ownership, auth-guard, a11y (all 5 pages)  |
+| A11y axe-core: no serious/critical violations | ✅ All 5 pages pass (Home, Login, Register, Dashboard, Detail) |
+| Color contrast WCAG AA                        | ✅ brand-600 #0284c7→#0369a1; button 5.50:1, links 5.50:1      |
+| BE security smokes                            | ✅ SQLi safe, malformed/expired JWT 401, CORS blocked origin   |
+| BE perf smoke: 50× generate <10s              | ✅ 50/50 succeeded, elapsed within limit                       |
+| BE perf smoke: PDF export p95 <2s             | ✅ completed under 2s                                          |
+| Plan.md updated                               | ✅                                                             |
 
 ### Phase 5 verification
 
