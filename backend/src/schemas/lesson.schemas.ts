@@ -29,3 +29,4 @@ export const listLessonsQuerySchema = z.object({
 export type LessonContent = z.infer<typeof lessonContentSchema>;
 export type GenerateLessonInput = z.infer<typeof generateLessonSchema>;
 export type ListLessonsQuery = z.infer<typeof listLessonsQuerySchema>;
+export type AgeGroup = (typeof AGE_GROUPS)[number];

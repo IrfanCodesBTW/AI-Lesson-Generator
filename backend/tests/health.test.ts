@@ -7,6 +7,7 @@ beforeAll(() => {
   process.env.NODE_ENV = 'test';
   process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
   process.env.JWT_SECRET = 'test-secret-32-characters-minimum-here';
+  process.env.GEMINI_API_KEY = '';
   resetEnvForTests();
 });
 
