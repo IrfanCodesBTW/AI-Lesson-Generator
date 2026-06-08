@@ -42,7 +42,9 @@ export function RegisterPage() {
         );
         navigate('/dashboard');
       } else {
-        setSuccess('Registration successful! Please check your email for a confirmation link.');
+        setSuccess(
+          "Account created. If you don't see a confirmation email, try signing in directly — your account may already be active.",
+        );
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Registration failed');
@@ -58,7 +60,7 @@ export function RegisterPage() {
       const { error: oAuthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/dashboard',
+          redirectTo: window.location.origin + '/auth/callback',
         },
       });
       if (oAuthError) throw oAuthError;

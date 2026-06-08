@@ -3,53 +3,34 @@ import { User } from '../lib/api';
 import { AuthContext, AuthState } from './auth-context';
 import { supabase } from '../lib/supabase';
 
+function handleSession(session: import('@supabase/supabase-js').Session | null) {
+  if (session) {
+    const u: User = {
+      id: session.user.id,
+      email: session.user.email || '',
+      name: session.user.user_metadata?.name || 'User',
+    };
+    return { user: u, token: session.access_token };
+  }
+  return { user: null as User | null, token: null as string | null };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    const stored = localStorage.getItem('user');
-    return stored ? (JSON.parse(stored) as User) : null;
-  });
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        const u = {
-          id: session.user.id,
-          email: session.user.email || '',
-          name: session.user.user_metadata?.name || 'User',
-        };
-        setUser(u);
-        setToken(session.access_token);
-        localStorage.setItem('token', session.access_token);
-        localStorage.setItem('user', JSON.stringify(u));
-      } else {
-        setUser(null);
-        setToken(null);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-      }
-      setLoading(false);
-    });
-
-    // 2. Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        const u = {
-          id: session.user.id,
-          email: session.user.email || '',
-          name: session.user.user_metadata?.name || 'User',
-        };
-        setUser(u);
-        setToken(session.access_token);
-        localStorage.setItem('token', session.access_token);
-        localStorage.setItem('user', JSON.stringify(u));
+      const { user: u, token: t } = handleSession(session);
+      setUser(u);
+      setToken(t);
+      if (t) {
+        localStorage.setItem('token', t);
+        if (u) localStorage.setItem('user', JSON.stringify(u));
       } else {
-        setUser(null);
-        setToken(null);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
