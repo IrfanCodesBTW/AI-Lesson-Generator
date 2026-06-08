@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLessons } from '../../hooks/useLessons';
+import { UseLessonsResult } from '../../hooks/useLessons';
 import { SearchInput } from '../ui/SearchInput';
 import { TemplateCard } from '../ui/TemplateCard';
 import { SkeletonCard } from '../ui/SkeletonCard';
 import { EmptyState } from '../ui/EmptyState';
 import { Plus } from 'lucide-react';
 
-export function LibraryTab() {
+interface LibraryTabProps {
+  lessons: UseLessonsResult;
+}
+
+export function LibraryTab({ lessons }: LibraryTabProps) {
   const navigate = useNavigate();
-  const lessons = useLessons();
   const [filter, setFilter] = useState('');
 
   async function handleDelete(id: string) {

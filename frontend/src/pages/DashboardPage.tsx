@@ -24,19 +24,19 @@ export function DashboardPage() {
   const renderTab = () => {
     switch (currentTab) {
       case 'generator':
-        return <GeneratorTab />;
+        return <GeneratorTab lessons={lessons} />;
       case 'library':
-        return <LibraryTab />;
+        return <LibraryTab lessons={lessons} />;
       case 'analytics':
-        return <AnalyticsTab />;
+        return <AnalyticsTab lessons={lessons} />;
       case 'templates':
-        return <TemplatesTab />;
+        return <TemplatesTab lessons={lessons} />;
       case 'resources':
         return <ResourcesTab />;
       case 'settings':
         return <SettingsTab />;
       default:
-        return <OverviewTab />;
+        return <OverviewTab lessons={lessons} />;
     }
   };
 

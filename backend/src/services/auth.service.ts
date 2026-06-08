@@ -2,8 +2,9 @@ import bcrypt from 'bcryptjs';
 import jwt, { SignOptions, JwtPayload } from 'jsonwebtoken';
 import { loadEnv } from '../config/env';
 import { query, withClient } from '../lib/db';
-import { ConflictError, UnauthorizedError } from '../middleware/error';
+import { ConflictError, UnauthorizedError, BadRequestError } from '../middleware/error';
 import { getLogger } from '../lib/logger';
+import { getSupabase } from '../lib/supabase';
 
 const BCRYPT_COST = 12;
 
@@ -69,12 +70,51 @@ export function verifyToken(token: string): { userId: string } {
   return { userId: decoded.sub };
 }
 
+export async function syncUserToDb(id: string, email: string, name: string): Promise<void> {
+  await query(
+    `INSERT INTO users (id, name, email, password_hash)
+     VALUES ($1, $2, $3, '')
+     ON CONFLICT (id) DO NOTHING`,
+    [id, email, name],
+  );
+}
+
 export async function registerUser(input: {
   name: string;
   email: string;
   password: string;
 }): Promise<AuthResult> {
   const { name, email, password } = input;
+
+  if (process.env.NODE_ENV !== 'test') {
+    const { data, error } = await getSupabase().auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name },
+      },
+    });
+    if (error) {
+      if (error.status === 409) {
+        throw new ConflictError('Email already registered');
+      }
+      throw new BadRequestError(error.message);
+    }
+    if (!data.user) {
+      throw new BadRequestError('Failed to create user in Supabase');
+    }
+    const user = {
+      id: data.user.id,
+      name,
+      email,
+      createdAt: data.user.created_at || new Date().toISOString(),
+    };
+    await syncUserToDb(user.id, user.email, user.name);
+    const token = data.session?.access_token || '';
+    return { user, token };
+  }
+
+  // Local/Test Fallback
   const passwordHash = await hashPassword(password);
   try {
     const row = await withClient<UserRow>(async (client) => {
@@ -101,6 +141,29 @@ export async function registerUser(input: {
 
 export async function loginUser(input: { email: string; password: string }): Promise<AuthResult> {
   const { email, password } = input;
+
+  if (process.env.NODE_ENV !== 'test') {
+    const { data, error } = await getSupabase().auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      throw new UnauthorizedError(error.message);
+    }
+    if (!data.user || !data.session) {
+      throw new UnauthorizedError('Invalid credentials');
+    }
+    const user = {
+      id: data.user.id,
+      name: data.user.user_metadata?.name || 'User',
+      email: data.user.email || '',
+      createdAt: data.user.created_at || new Date().toISOString(),
+    };
+    await syncUserToDb(user.id, user.email, user.name);
+    return { user, token: data.session.access_token };
+  }
+
+  // Local/Test Fallback
   const rows = await query<UserRow>(
     `SELECT id, name, email, password_hash, created_at
      FROM users WHERE email = $1 LIMIT 1`,
@@ -108,6 +171,9 @@ export async function loginUser(input: { email: string; password: string }): Pro
   );
   const row = rows[0];
   if (!row) {
+    throw new UnauthorizedError('Invalid credentials');
+  }
+  if (!row.password_hash) {
     throw new UnauthorizedError('Invalid credentials');
   }
   const ok = await comparePassword(password, row.password_hash);

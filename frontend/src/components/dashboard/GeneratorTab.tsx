@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLessons } from '../../hooks/useLessons';
+import { UseLessonsResult } from '../../hooks/useLessons';
 import { AGE_GROUPS, AgeGroup, THEMES, Theme } from '../../lib/api';
 import { SectionCard } from '../ui/SectionCard';
 import { Sparkles, Check, ChevronRight, ChevronLeft } from 'lucide-react';
@@ -20,9 +20,12 @@ const themeIcons: Record<string, string> = {
   'My Body': '🦴',
 };
 
-export function GeneratorTab() {
+interface GeneratorTabProps {
+  lessons: UseLessonsResult;
+}
+
+export function GeneratorTab({ lessons }: GeneratorTabProps) {
   const navigate = useNavigate();
-  const lessons = useLessons();
   const [step, setStep] = useState<Step>(1);
   const [age, setAge] = useState<AgeGroup>('4-5');
   const [theme, setTheme] = useState<Theme>('Animals');

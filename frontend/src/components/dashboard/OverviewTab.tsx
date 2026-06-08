@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { useLessons } from '../../hooks/useLessons';
+import { UseLessonsResult } from '../../hooks/useLessons';
 import { MetricCard } from '../ui/MetricCard';
 import { BarChart } from '../ui/BarChart';
 import { InsightCard } from '../ui/InsightCard';
@@ -10,10 +10,13 @@ import { StatusBadge } from '../ui/StatusBadge';
 import { Link } from 'react-router-dom';
 import { Sparkles, TrendingDown, BookOpen } from 'lucide-react';
 
-export function OverviewTab() {
+interface OverviewTabProps {
+  lessons: UseLessonsResult;
+}
+
+export function OverviewTab({ lessons }: OverviewTabProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const lessons = useLessons();
 
   const getLessonsThisWeek = () => {
     const oneWeekAgo = new Date();
@@ -31,18 +34,7 @@ export function OverviewTab() {
     { label: 'Sat', value: 3 },
   ];
 
-  const getMockStatus = (idx: number) => {
-    if (idx === 0) return 'generated';
-    if (idx === 1) return 'draft';
-    return 'reviewed';
-  };
-
-  const getMockTitle = (idx: number, actualTheme: string) => {
-    if (idx === 0) return 'Sensory Play: Ocean';
-    if (idx === 1) return 'Number Recognition';
-    if (idx === 2) return 'Storytelling: Fall';
-    return actualTheme;
-  };
+  // Removed mock status and title overrides to show real database records
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -153,17 +145,9 @@ export function OverviewTab() {
                       });
                       const isLast = idx === Math.min(lessons.items.length, 3) - 1;
 
-                      // Match exactly the names and status tags in the reference design for high-fidelity representation
-                      const displayTitle = getMockTitle(idx, lesson.theme);
-                      const displayStatus = getMockStatus(idx);
-                      const displayDate =
-                        idx === 0
-                          ? 'Oct 26, 2025'
-                          : idx === 1
-                            ? 'Oct 25, 2025'
-                            : idx === 2
-                              ? 'Oct 24, 2025'
-                              : dateStr;
+                      const displayTitle = lesson.theme;
+                      const displayStatus = lesson.source === 'gemini' ? 'generated' : 'reviewed';
+                      const displayDate = dateStr;
 
                       return (
                         <tr
@@ -192,11 +176,7 @@ export function OverviewTab() {
                               to={`/lessons/${lesson.id}`}
                               className="text-xs font-black text-primary-500 hover:underline"
                             >
-                              {displayStatus === 'reviewed'
-                                ? 'View'
-                                : displayStatus === 'draft'
-                                  ? 'Edit'
-                                  : 'Edit/View'}
+                              {displayStatus === 'reviewed' ? 'View' : 'Edit/View'}
                             </Link>
                           </td>
                         </tr>

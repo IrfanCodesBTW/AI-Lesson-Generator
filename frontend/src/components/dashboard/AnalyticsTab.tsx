@@ -1,10 +1,12 @@
-import { useLessons } from '../../hooks/useLessons';
+import { UseLessonsResult } from '../../hooks/useLessons';
 import { SectionCard } from '../ui/SectionCard';
 import { Sparkles, Layers } from 'lucide-react';
 
-export function AnalyticsTab() {
-  const lessons = useLessons();
+interface AnalyticsTabProps {
+  lessons: UseLessonsResult;
+}
 
+export function AnalyticsTab({ lessons }: AnalyticsTabProps) {
   const getAiCount = () => {
     return lessons.items.filter((item) => item.source === 'gemini').length;
   };

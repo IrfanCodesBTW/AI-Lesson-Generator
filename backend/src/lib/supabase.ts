@@ -7,12 +7,12 @@ let _client: SupabaseClient | null = null;
 export function getSupabase(): SupabaseClient {
   if (_client) return _client;
   const env = loadEnv();
-  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
-    getLogger().warn('Supabase env not configured; admin client unavailable');
+  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
+    getLogger().warn('Supabase env not configured; client unavailable');
   }
   _client = createClient(
     env.SUPABASE_URL ?? 'https://placeholder.supabase.co',
-    env.SUPABASE_SERVICE_ROLE_KEY ?? 'placeholder',
+    env.SUPABASE_ANON_KEY ?? 'placeholder',
     {
       auth: { autoRefreshToken: false, persistSession: false },
     },

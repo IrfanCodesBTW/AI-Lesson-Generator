@@ -17,7 +17,7 @@ describe('HomePage', () => {
         </AuthProvider>
       </MemoryRouter>,
     );
-    expect(screen.getByRole('heading', { name: /generate preschool/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /generate preschool/i })).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getByText(/online/i)).toBeInTheDocument();
     });

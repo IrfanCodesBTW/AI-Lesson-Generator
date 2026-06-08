@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useLessons } from '../../hooks/useLessons';
+import { UseLessonsResult } from '../../hooks/useLessons';
 import { Theme, AgeGroup } from '../../lib/api';
 import { Sparkles } from 'lucide-react';
 
@@ -37,9 +37,12 @@ const templatePresets: TemplatePreset[] = [
   },
 ];
 
-export function TemplatesTab() {
+interface TemplatesTabProps {
+  lessons: UseLessonsResult;
+}
+
+export function TemplatesTab({ lessons }: TemplatesTabProps) {
   const navigate = useNavigate();
-  const lessons = useLessons();
 
   async function handleQuickGenerate(quickAge: AgeGroup, quickTheme: Theme) {
     const lesson = await lessons.generate({ ageGroup: quickAge, theme: quickTheme });
