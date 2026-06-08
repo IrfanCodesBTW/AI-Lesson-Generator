@@ -75,7 +75,7 @@ export async function syncUserToDb(id: string, email: string, name: string): Pro
     `INSERT INTO users (id, name, email, password_hash)
      VALUES ($1, $2, $3, '')
      ON CONFLICT (id) DO NOTHING`,
-    [id, email, name],
+    [id, name, email],
   );
 }
 
