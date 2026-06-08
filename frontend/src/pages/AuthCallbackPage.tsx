@@ -6,8 +6,8 @@ export function AuthCallbackPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
         navigate('/dashboard', { replace: true });
       }
     });

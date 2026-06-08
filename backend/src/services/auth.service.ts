@@ -70,13 +70,15 @@ export function verifyToken(token: string): { userId: string } {
   return { userId: decoded.sub };
 }
 
-export async function syncUserToDb(id: string, email: string, name: string): Promise<void> {
-  await query(
+export async function syncUserToDb(id: string, email: string, name: string): Promise<string> {
+  const rows = await query<{ id: string }>(
     `INSERT INTO users (id, name, email, password_hash)
      VALUES ($1, $2, $3, '')
-     ON CONFLICT (id) DO NOTHING`,
+     ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
+     RETURNING id`,
     [id, name, email],
   );
+  return rows[0]?.id ?? id;
 }
 
 export async function registerUser(input: {

@@ -44,12 +44,17 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
     try {
       const { data, error } = await getSupabase().auth.getUser(token);
       if (!error && data?.user) {
-        await syncUserToDb(
-          data.user.id,
-          data.user.email || '',
-          data.user.user_metadata?.name || 'User',
-        );
-        req.userId = data.user.id;
+        try {
+          const localId = await syncUserToDb(
+            data.user.id,
+            data.user.email || '',
+            data.user.user_metadata?.name || 'User',
+          );
+          req.userId = localId;
+        } catch (syncErr) {
+          logger.warn({ err: syncErr }, 'syncUserToDb failed (non-fatal), using Supabase ID');
+          req.userId = data.user.id;
+        }
         return next();
       }
       logger.error(
@@ -77,10 +82,15 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
       email?.split('@')[0] ||
       'User';
 
-    await syncUserToDb(decoded.sub, email || '', name);
+    try {
+      const localId = await syncUserToDb(decoded.sub, email || '', name);
+      req.userId = localId;
+    } catch (syncErr) {
+      logger.warn({ err: syncErr }, 'syncUserToDb failed (non-fatal), using decoded sub');
+      req.userId = decoded.sub;
+    }
 
-    req.userId = decoded.sub;
-    logger.info({ userId: decoded.sub }, 'requireAuth via local JWT decode');
+    logger.info({ userId: req.userId }, 'requireAuth via local JWT decode');
     return next();
   } catch {
     return next(new UnauthorizedError('Invalid or expired token'));
