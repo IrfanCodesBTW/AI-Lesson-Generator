@@ -5,7 +5,6 @@ import { UnauthorizedError } from './error';
 import { getSupabase } from '../lib/supabase';
 import { getLogger } from '../lib/logger';
 import { loadEnv } from '../config/env';
-import { query } from '../lib/db';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
