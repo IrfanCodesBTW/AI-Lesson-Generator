@@ -67,81 +67,50 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
       <Link
         to={item.path}
         onClick={() => setMobileOpen(false)}
-        className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 cursor-pointer select-none group ${
-          active ? 'text-white shadow-md' : ''
-        }`}
-        style={
+        className={`flex items-center gap-3 px-4 py-2.5 text-sm font-black rounded-[14px] transition-all duration-150 cursor-pointer select-none group border-[3px] ${
           active
-            ? {
-                backgroundColor: 'var(--color-primary-500)',
-                boxShadow: '0 4px 12px rgba(109,93,246,.25)',
-              }
-            : {}
-        }
+            ? 'bg-white text-black border-black shadow-[2px_2px_0px_#000] dark:bg-black dark:text-white dark:border-white dark:shadow-[2px_2px_0px_#fff]'
+            : 'bg-transparent text-text-secondary border-transparent hover:border-black dark:hover:border-white hover:bg-hover hover:text-text-primary'
+        }`}
       >
         <ActiveIcon
-          className={`h-[18px] w-[18px] transition-colors duration-200 ${
-            active
-              ? 'text-white'
-              : 'text-[var(--color-text-muted)] group-hover:text-[var(--color-text-primary)]'
+          className={`h-[18px] w-[18px] transition-colors duration-150 stroke-[2.5] ${
+            active ? 'text-black dark:text-white' : 'text-text-muted group-hover:text-text-primary'
           }`}
         />
-        <span
-          className={
-            active
-              ? 'text-white'
-              : 'text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]'
-          }
-        >
-          {item.label}
-        </span>
+        <span>{item.label}</span>
       </Link>
     );
   };
 
   const SidebarContent = () => (
-    <div
-      className="flex h-full flex-col overflow-hidden theme-transition"
-      style={{
-        backgroundColor: 'var(--color-sidebar)',
-        borderRight: '1px solid var(--color-border)',
-      }}
-    >
+    <div className="flex h-full flex-col overflow-hidden border-r-[4px] border-black dark:border-white bg-[#f7f4ea] dark:bg-[#1a1a1a]">
       <div className="flex-1 flex flex-col justify-between px-4 py-6 overflow-y-auto">
-        <div className="space-y-7">
+        <div className="space-y-6">
           {/* Brand / Logo */}
           <Link
             to="/dashboard"
-            className="flex items-center gap-3 px-2 hover:opacity-90 transition-opacity"
+            className="flex items-center gap-3 px-2 hover:opacity-90 transition-opacity active:scale-[0.98]"
           >
-            <div
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-md"
-              style={{
-                background:
-                  'linear-gradient(135deg, var(--color-primary-500), var(--color-primary-400))',
-                boxShadow: '0 4px 12px rgba(109,93,246,.2)',
-              }}
-            >
-              <span className="text-sm font-black">Ai</span>
-            </div>
+            <img
+              src="/logo.png"
+              className="h-11 w-11 rounded-full border-[3px] border-black dark:border-white shadow-[2px_2px_0px_#000] dark:shadow-[2px_2px_0px_#fff] object-cover bg-white"
+              alt="AI Plan Lesson Generator Logo"
+            />
             <div>
-              <span
-                className="block text-base font-extrabold tracking-tight leading-tight"
-                style={{ color: 'var(--color-text-primary)' }}
-              >
-                AI Lesson Plan
+              <span className="block text-base font-black font-heading tracking-tight leading-none text-text-primary">
+                AI Plan Lesson
                 <br />
                 Generator
               </span>
             </div>
           </Link>
 
+          <div className="border-t-[3px] border-black dark:border-white my-3 -mx-4" />
+
           {/* Main Navigation */}
           <nav aria-label="Main navigation" className="space-y-1">
-            <span
-              className="block text-[10px] font-bold uppercase tracking-widest px-3 mb-2"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
+            <span className="block text-[10px] font-black uppercase tracking-widest px-3 mb-2 text-text-muted">
               Main
             </span>
             {mainNavItems.map((item) => (
@@ -151,10 +120,7 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
 
           {/* Tools Navigation */}
           <nav aria-label="Tools navigation" className="space-y-1">
-            <span
-              className="block text-[10px] font-bold uppercase tracking-widest px-3 mb-2"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
+            <span className="block text-[10px] font-black uppercase tracking-widest px-3 mb-2 text-text-muted">
               Tools
             </span>
             {toolNavItems.map((item) => (
@@ -166,49 +132,26 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
         {/* Bottom Section */}
         <div className="space-y-3 pt-4">
           {/* Help Card */}
-          <div
-            className="rounded-2xl p-4 text-center space-y-3"
-            style={{
-              backgroundColor: 'var(--color-hover)',
-              border: '1px solid var(--color-border)',
-            }}
-          >
-            <div
-              className="mx-auto flex h-10 w-10 items-center justify-center rounded-full"
-              style={{
-                backgroundColor: 'var(--color-primary-50)',
-                color: 'var(--color-primary-500)',
-              }}
-            >
-              <HelpCircle className="h-5 w-5" />
+          <div className="rounded-[20px] p-4 text-center space-y-3 border-[3px] border-black dark:border-white bg-card shadow-[3px_3px_0px_#000] dark:shadow-[3px_3px_0px_#fff]">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border-[2px] border-black bg-[#f4f0ff] text-[#8d6be8]">
+              <HelpCircle className="h-5 w-5 stroke-[2.5]" />
             </div>
             <div>
-              <p className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                Need help?
-              </p>
-              <p className="text-[11px] mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+              <p className="text-xs font-black text-text-primary">Need help?</p>
+              <p className="text-[11px] font-bold mt-0.5 text-text-secondary">
                 Feel free to contact us
               </p>
             </div>
-            <button
-              className="w-full rounded-xl py-2 text-xs font-bold text-white transition-all duration-200 cursor-pointer hover:opacity-90"
-              style={{
-                background:
-                  'linear-gradient(135deg, var(--color-primary-500), var(--color-primary-400))',
-              }}
-            >
+            <button className="w-full rounded-xl py-2 text-xs font-black text-white border-[2px] border-black bg-[#8d6be8] hover:bg-[#734bd3] transition-colors cursor-pointer active:translate-y-[1px]">
               Get support
             </button>
           </div>
 
           {/* Theme Toggle & User Section */}
-          <div className="pt-3" style={{ borderTop: '1px solid var(--color-border)' }}>
+          <div className="pt-3 border-t-[3px] border-black dark:border-white">
             {/* Theme Toggle */}
             <div className="flex items-center justify-between px-3 py-2 mb-2">
-              <span
-                className="text-xs font-semibold"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
+              <span className="text-xs font-black text-text-secondary uppercase tracking-wide">
                 Theme
               </span>
               <ThemeToggle />
@@ -216,30 +159,15 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
 
             {/* User Card */}
             {user && (
-              <div
-                className="flex items-center gap-3 px-3 py-3 rounded-xl mb-2"
-                style={{ backgroundColor: 'var(--color-hover)' }}
-              >
-                <div
-                  className="h-9 w-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, var(--color-primary-400), var(--color-primary-500))',
-                  }}
-                >
+              <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl border-[2px] border-black dark:border-white bg-card shadow-[2px_2px_0px_#000] dark:shadow-[2px_2px_0px_#fff] mb-2">
+                <div className="h-9 w-9 rounded-full flex items-center justify-center text-white border-[2px] border-black bg-[#8d6be8] text-sm font-black flex-shrink-0">
                   {user.name?.charAt(0)?.toUpperCase() || 'T'}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <span
-                    className="block text-sm font-bold truncate leading-snug"
-                    style={{ color: 'var(--color-text-primary)' }}
-                  >
+                  <span className="block text-sm font-black truncate leading-tight text-text-primary">
                     {user.name}
                   </span>
-                  <span
-                    className="block text-[11px] font-medium truncate mt-0.5"
-                    style={{ color: 'var(--color-text-secondary)' }}
-                  >
+                  <span className="block text-[11px] font-semibold truncate mt-0.5 text-text-muted">
                     {user.email}
                   </span>
                 </div>
@@ -249,18 +177,9 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
             {/* Sign Out */}
             <button
               onClick={handleLogout}
-              className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 cursor-pointer select-none"
-              style={{ color: 'var(--color-text-secondary)' }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--color-danger-light)';
-                e.currentTarget.style.color = 'var(--color-danger)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'var(--color-text-secondary)';
-              }}
+              className="flex w-full items-center gap-3 px-3 py-2 text-sm font-black rounded-xl border-[2px] border-transparent transition-all duration-150 cursor-pointer select-none text-text-secondary hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4 w-4 stroke-[2.5]" />
               Sign out
             </button>
           </div>
@@ -270,61 +189,24 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
   );
 
   return (
-    <div
-      className="flex min-h-screen theme-transition"
-      style={{
-        backgroundColor: 'var(--color-canvas)',
-        color: 'var(--color-text-primary)',
-      }}
-    >
+    <div className="flex min-h-screen bg-canvas text-text-primary">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:z-20 md:block md:w-[260px]">
+      <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:z-20 md:block md:w-[280px]">
         <SidebarContent />
       </aside>
 
       {/* Main Container */}
-      <div className="flex flex-1 flex-col md:pl-[260px] relative overflow-hidden">
-        {/* Luminous Background Blobs */}
-        <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
-          <div
-            className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[120px] opacity-30"
-            style={{
-              background:
-                'linear-gradient(135deg, var(--color-primary-100), var(--color-accent-light))',
-            }}
-          />
-          <div
-            className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full blur-[120px] opacity-20"
-            style={{
-              background:
-                'linear-gradient(135deg, var(--color-success-light), var(--color-warning-light))',
-            }}
-          />
-        </div>
-
+      <div className="flex flex-1 flex-col md:pl-[280px] relative overflow-hidden">
         {/* Mobile Navbar Header */}
-        <header
-          className="sticky top-0 z-10 flex h-16 items-center justify-between px-4 md:hidden backdrop-blur-md"
-          style={{
-            backgroundColor: 'color-mix(in srgb, var(--color-card) 80%, transparent)',
-            borderBottom: '1px solid var(--color-border)',
-          }}
-        >
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between px-4 md:hidden border-b-[4px] border-black dark:border-white bg-[#f7f4ea] dark:bg-[#1a1a1a]">
           <Link to="/dashboard" className="flex items-center gap-2">
-            <div
-              className="h-8 w-8 rounded-lg flex items-center justify-center text-white text-xs font-black"
-              style={{
-                background:
-                  'linear-gradient(135deg, var(--color-primary-500), var(--color-primary-400))',
-              }}
-            >
-              Ai
-            </div>
-            <span
-              className="text-base font-extrabold tracking-tight"
-              style={{ color: 'var(--color-text-primary)' }}
-            >
-              AI Lesson Plan Generator
+            <img
+              src="/logo.png"
+              className="h-8 w-8 rounded-full border-[2px] border-black dark:border-white shadow-[1.5px_1.5px_0px_#000] dark:shadow-[1.5px_1.5px_0px_#fff] object-cover bg-white"
+              alt="AI Plan Lesson Generator Logo"
+            />
+            <span className="text-sm font-black font-heading tracking-tight text-text-primary">
+              AI Plan Lesson Generator
             </span>
           </Link>
           <div className="flex items-center gap-2">
@@ -332,10 +214,9 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
             <button
               onClick={() => setMobileOpen(true)}
               aria-label="Open navigation menu"
-              className="rounded-xl p-2 cursor-pointer transition-colors"
-              style={{ color: 'var(--color-text-secondary)' }}
+              className="rounded-xl p-2 border-[2px] border-black dark:border-white bg-card text-text-primary cursor-pointer transition-colors active:translate-y-[1px]"
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5 stroke-[2.5]" />
             </button>
           </div>
         </header>
@@ -344,22 +225,17 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
         {mobileOpen && (
           <div className="fixed inset-0 z-40 flex md:hidden">
             <div
-              className="fixed inset-0 backdrop-blur-sm transition-opacity"
-              style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
               onClick={() => setMobileOpen(false)}
             />
-            <div
-              className="relative flex w-full max-w-xs flex-1 flex-col animate-slide-up"
-              style={{ backgroundColor: 'var(--color-sidebar)' }}
-            >
+            <div className="relative flex w-full max-w-xs flex-1 flex-col border-r-[4px] border-black bg-[#f7f4ea] dark:bg-[#1a1a1a]">
               <div className="absolute right-4 top-4 z-10">
                 <button
                   onClick={() => setMobileOpen(false)}
                   aria-label="Close navigation menu"
-                  className="rounded-xl p-2 cursor-pointer transition-colors"
-                  style={{ color: 'var(--color-text-secondary)' }}
+                  className="rounded-xl p-2 border-[2px] border-black bg-card text-text-primary cursor-pointer transition-colors active:translate-y-[1px]"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-5 w-5 stroke-[2.5]" />
                 </button>
               </div>
               <SidebarContent />
@@ -368,7 +244,7 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
         )}
 
         {/* Main Content Area */}
-        <main className="mx-auto w-full max-w-[1440px] px-4 py-8 md:px-8 md:py-10">{children}</main>
+        <main className="mx-auto w-full max-w-[1440px] px-6 py-6 md:px-8 md:py-8">{children}</main>
       </div>
     </div>
   );

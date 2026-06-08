@@ -17,27 +17,23 @@ export function SectionCard({
 }: SectionCardProps) {
   const hasHeader = title || subtitle || headerRight;
   return (
-    <section
-      className={`rounded-2xl p-6 theme-transition ${className}`}
-      style={{
-        backgroundColor: 'var(--color-card)',
-        border: '1px solid var(--color-border)',
-        boxShadow: 'var(--shadow-card)',
-      }}
-    >
+    <section className={`card ${className}`}>
       {hasHeader && (
-        <div
-          className="flex items-center justify-between mb-5 pb-4"
-          style={{ borderBottom: '1px solid var(--color-border)' }}
-        >
+        <div className="flex items-center justify-between mb-5 pb-2">
           <div>
             {title && (
-              <h2 className="text-h4 font-bold" style={{ color: 'var(--color-text-primary)' }}>
+              <h2
+                className="text-2xl font-black font-heading"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
                 {title}
               </h2>
             )}
             {subtitle && (
-              <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+              <p
+                className="text-xs font-semibold mt-0.5"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
                 {subtitle}
               </p>
             )}

@@ -117,32 +117,20 @@ export function LessonDetailPage() {
   return (
     <div className="space-y-8 max-w-4xl mx-auto animate-fade-in">
       {/* Navigation Header */}
-      <div
-        className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6"
-        style={{ borderBottom: '1px solid var(--color-border)' }}
-      >
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b-[4px] border-black dark:border-white">
         <div className="space-y-2">
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors"
-            style={{ color: 'var(--color-primary-500)' }}
+            className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider transition-colors text-primary-500 hover:underline"
           >
-            <ArrowLeft className="h-3.5 w-3.5" /> Back
+            <ArrowLeft className="h-3.5 w-3.5 stroke-[3]" /> Back
           </Link>
-          <h1
-            className="text-3xl font-extrabold tracking-tight"
-            style={{ color: 'var(--color-text-primary)' }}
-          >
-            {lesson.theme}
-          </h1>
-          <div
-            className="flex flex-wrap items-center gap-2 text-sm"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
+          <h1 className="text-4xl font-black font-heading text-text-primary">{lesson.theme}</h1>
+          <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-text-secondary">
             <span>Ages {lesson.ageGroup}</span>
-            <span style={{ color: 'var(--color-border)' }}>·</span>
+            <span>·</span>
             <span>{new Date(lesson.createdAt).toLocaleString()}</span>
-            <StatusBadge status={lesson.source === 'gemini' ? 'ai' : 'template'} />
+            <StatusBadge status={lesson.source === 'gemini' ? 'generated' : 'reviewed'} />
           </div>
         </div>
 
@@ -150,29 +138,29 @@ export function LessonDetailPage() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
-            className="btn-secondary py-2 px-3 flex items-center gap-1.5"
+            className="btn-secondary py-2 px-4 flex items-center gap-1.5 h-11 text-xs"
             onClick={handleRegenerate}
             disabled={regenerating}
           >
-            <Sparkles className="h-4 w-4" />
+            <Sparkles className="h-4 w-4 stroke-[2.5]" />
             {regenerating ? 'Regenerating…' : 'Regenerate'}
           </button>
           <button
             type="button"
-            className="btn-primary py-2 px-3 flex items-center gap-1.5"
+            className="btn-primary py-2 px-4 flex items-center gap-1.5 h-11 text-xs"
             onClick={handlePdf}
             disabled={downloading}
           >
-            <FileDown className="h-4 w-4" />
+            <FileDown className="h-4 w-4 stroke-[2.5]" />
             {downloading ? 'Preparing…' : 'Export PDF'}
           </button>
           <button
             type="button"
-            className="btn-danger py-2 px-3 flex items-center gap-1.5"
+            className="btn-danger py-2 px-4 flex items-center gap-1.5 h-11 text-xs"
             onClick={handleDelete}
             disabled={deleting}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-4 w-4 stroke-[2.5]" />
             {deleting ? 'Deleting…' : 'Delete'}
           </button>
         </div>
@@ -182,12 +170,7 @@ export function LessonDetailPage() {
       {error && (
         <div
           role="alert"
-          className="rounded-xl px-4 py-3 text-sm"
-          style={{
-            backgroundColor: 'var(--color-danger-light)',
-            border: '1px solid var(--color-danger)',
-            color: 'var(--color-danger)',
-          }}
+          className="rounded-[16px] px-4 py-3 text-sm font-black border-[3px] border-black bg-red-100 text-red-700 animate-fade-in"
         >
           {error}
         </div>
@@ -198,38 +181,25 @@ export function LessonDetailPage() {
         {/* Core Lesson Detail Sections */}
         <div className="lg:col-span-2 space-y-6">
           <SectionCard title="Learning Objective">
-            <p
-              className="text-base font-medium leading-relaxed"
-              style={{ color: 'var(--color-text-primary)' }}
-            >
+            <p className="text-base font-semibold leading-relaxed text-text-primary">
               {c.objective}
             </p>
           </SectionCard>
 
           <SectionCard title="Classroom Activity">
-            <pre
-              className="whitespace-pre-wrap font-sans text-sm leading-relaxed"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
+            <pre className="whitespace-pre-wrap font-sans text-sm font-semibold leading-relaxed text-text-secondary">
               {c.activity}
             </pre>
           </SectionCard>
 
           <SectionCard title="Rhyme / Song">
-            <pre
-              className="whitespace-pre-wrap font-sans text-sm italic leading-relaxed p-4 rounded-xl"
-              style={{
-                color: 'var(--color-text-secondary)',
-                backgroundColor: 'var(--color-hover)',
-                border: '1px solid var(--color-border)',
-              }}
-            >
+            <pre className="whitespace-pre-wrap font-sans text-sm font-semibold italic leading-relaxed p-4 rounded-[16px] border-[3px] border-black dark:border-white bg-[#fffdf5] dark:bg-zinc-900 shadow-[2px_2px_0px_#000] dark:shadow-[2px_2px_0px_#fff]">
               {c.rhyme}
             </pre>
           </SectionCard>
 
           <SectionCard title="Worksheet Idea">
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="text-sm font-semibold leading-relaxed text-text-secondary">
               {c.worksheet}
             </p>
           </SectionCard>
@@ -237,34 +207,18 @@ export function LessonDetailPage() {
 
         {/* Sidebar Materials Panel */}
         <div className="space-y-6">
-          <div
-            className="rounded-2xl p-6 theme-transition"
-            style={{
-              backgroundColor: 'var(--color-card)',
-              border: '1px solid var(--color-border)',
-              boxShadow: 'var(--shadow-card)',
-            }}
-          >
-            <div
-              className="flex items-center gap-2 mb-4 pb-3"
-              style={{ borderBottom: '1px solid var(--color-border)' }}
-            >
-              <Bookmark className="h-5 w-5" style={{ color: 'var(--color-primary-500)' }} />
-              <h2 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                Materials Required
-              </h2>
+          <div className="card">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b-[2px] border-black dark:border-white">
+              <Bookmark className="h-5 w-5 stroke-[2.5] text-[#8D6BE8]" />
+              <h2 className="text-base font-black text-text-primary">Materials Required</h2>
             </div>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2.5 font-semibold">
               {c.materials.map((m, i) => (
                 <li
                   key={i}
-                  className="flex items-start gap-2.5 text-sm leading-relaxed"
-                  style={{ color: 'var(--color-text-secondary)' }}
+                  className="flex items-start gap-2.5 text-sm leading-relaxed text-text-secondary"
                 >
-                  <div
-                    className="h-1.5 w-1.5 rounded-full mt-2 flex-shrink-0"
-                    style={{ backgroundColor: 'var(--color-primary-400)' }}
-                  />
+                  <div className="h-2 w-2 rounded-full mt-2 bg-[#8D6BE8] border-[1px] border-black flex-shrink-0" />
                   <span>{m}</span>
                 </li>
               ))}

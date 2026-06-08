@@ -11,30 +11,18 @@ export function ThemeToggle() {
       role="switch"
       aria-checked={isDark}
       aria-label="Toggle dark mode"
-      className="relative flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 cursor-pointer"
-      style={{
-        backgroundColor: 'var(--color-hover)',
-        color: 'var(--color-text-secondary)',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = 'var(--color-active)';
-        e.currentTarget.style.color = 'var(--color-text-primary)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = 'var(--color-hover)';
-        e.currentTarget.style.color = 'var(--color-text-secondary)';
-      }}
+      className="relative flex h-10 w-10 items-center justify-center rounded-xl border-[3px] border-black dark:border-white bg-card shadow-[2px_2px_0px_#000] dark:shadow-[2px_2px_0px_#fff] transition-all duration-150 cursor-pointer active:translate-y-[1px] active:shadow-sm"
     >
       <div className="relative h-5 w-5">
         <Sun
-          className="absolute inset-0 h-5 w-5 transition-all duration-300"
+          className="absolute inset-0 h-5 w-5 stroke-[2.5] text-text-primary transition-all duration-150"
           style={{
             opacity: isDark ? 0 : 1,
             transform: isDark ? 'rotate(90deg) scale(0)' : 'rotate(0) scale(1)',
           }}
         />
         <Moon
-          className="absolute inset-0 h-5 w-5 transition-all duration-300"
+          className="absolute inset-0 h-5 w-5 stroke-[2.5] text-text-primary transition-all duration-150"
           style={{
             opacity: isDark ? 1 : 0,
             transform: isDark ? 'rotate(0) scale(1)' : 'rotate(-90deg) scale(0)',

@@ -61,62 +61,36 @@ export function TemplatesTab() {
         {templatePresets.map((preset) => (
           <div
             key={preset.theme}
-            className="flex flex-col justify-between p-6 rounded-2xl transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 theme-transition"
-            style={{
-              backgroundColor: 'var(--color-card)',
-              border: '1px solid var(--color-border)',
-              boxShadow: 'var(--shadow-card)',
-            }}
+            className="flex flex-col justify-between p-6 rounded-[20px] border-[4px] border-black dark:border-white bg-card shadow-card hover:translate-y-[-2px] hover:shadow-card-hover transition-all duration-150 group"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span
-                  className="text-xs font-bold uppercase tracking-wider"
-                  style={{ color: 'var(--color-primary-500)' }}
-                >
+                <span className="text-xs font-black uppercase tracking-wider text-[#8D6BE8]">
                   Ages {preset.age} Years
                 </span>
-                <span
-                  className="badge text-xs"
-                  style={{
-                    backgroundColor: 'var(--color-hover)',
-                    color: 'var(--color-text-secondary)',
-                    border: '1px solid var(--color-border)',
-                  }}
-                >
+                <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider border-[2px] border-black dark:border-white bg-[#f7f4ea] text-black shadow-[1px_1px_0px_#000]">
                   Preset
                 </span>
               </div>
               <div className="text-3xl">{preset.icon}</div>
-              <h3 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                {preset.theme}
-              </h3>
-              <p
-                className="text-xs leading-relaxed line-clamp-2"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
+              <h3 className="text-lg font-black font-heading text-text-primary">{preset.theme}</h3>
+              <p className="text-xs font-semibold leading-relaxed line-clamp-2 text-text-secondary">
                 {preset.description}
               </p>
             </div>
             <button
               onClick={() => void handleQuickGenerate(preset.age, preset.theme)}
               disabled={lessons.generating}
-              className="btn-secondary w-full text-xs font-bold py-2.5 mt-4 flex items-center justify-center gap-1.5 cursor-pointer"
+              className="btn-secondary w-full text-xs font-black py-2.5 mt-4 flex items-center justify-center gap-1.5 cursor-pointer h-10"
             >
               {lessons.generating ? (
                 <>
-                  <div
-                    className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-t-transparent"
-                    style={{
-                      borderColor: 'var(--color-text-secondary)',
-                      borderTopColor: 'transparent',
-                    }}
-                  />
+                  <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-t-transparent border-black" />
                   Processing…
                 </>
               ) : (
                 <>
-                  <Sparkles className="h-3.5 w-3.5" />
+                  <Sparkles className="h-3.5 w-3.5 stroke-[2.5]" />
                   Generate Preset
                 </>
               )}

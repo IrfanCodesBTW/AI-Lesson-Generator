@@ -12,27 +12,21 @@ export function ResourcesTab() {
             Welcome to the Curriculum Resources page. These guides help align generated lesson plans
             with early childhood educational metrics:
           </p>
-          <ul className="list-inside list-disc space-y-3">
+          <ul className="list-inside list-disc space-y-3 font-semibold text-text-secondary">
             <li>
-              <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                Physical Development:
-              </span>{' '}
-              Ensure classroom activities incorporate safe, gross/fine motor skill exercises
-              suitable for younger groups (Ages 2-3).
+              <span className="font-black text-text-primary">Physical Development:</span> Ensure
+              classroom activities incorporate safe, gross/fine motor skill exercises suitable for
+              younger groups (Ages 2-3).
             </li>
             <li>
-              <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                Language Literacy:
-              </span>{' '}
-              Leverage the &quot;Rhyme&quot; sections to foster word associations, phonemic
-              patterns, and language fluency.
+              <span className="font-black text-text-primary">Language Literacy:</span> Leverage the
+              &quot;Rhyme&quot; sections to foster word associations, phonemic patterns, and
+              language fluency.
             </li>
             <li>
-              <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                Worksheet Integration:
-              </span>{' '}
-              Worksheet ideas should involve simple drawings or matching exercises rather than
-              reading/writing tasks for children under age 5.
+              <span className="font-black text-text-primary">Worksheet Integration:</span> Worksheet
+              ideas should involve simple drawings or matching exercises rather than reading/writing
+              tasks for children under age 5.
             </li>
           </ul>
         </div>

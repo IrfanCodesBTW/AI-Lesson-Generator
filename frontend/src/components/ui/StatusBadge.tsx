@@ -6,33 +6,23 @@ interface StatusBadgeProps {
 const statusConfig = {
   generated: {
     label: 'Generated',
-    cssVarBg: 'var(--color-success-light)',
-    cssVarText: 'var(--color-success-dark)',
-    cssVarBorder: 'var(--color-success-light)',
+    className: 'bg-[#EBF2FE] text-[#2F6FD6] dark:bg-[#1a2e50] dark:text-[#60a5fa]',
   },
   draft: {
     label: 'Draft',
-    cssVarBg: 'var(--color-warning-light)',
-    cssVarText: 'var(--color-warning-dark)',
-    cssVarBorder: 'var(--color-warning-light)',
+    className: 'bg-[#FFF9E0] text-[#E6BD19] dark:bg-[#3e341a] dark:text-[#fcd34d]',
   },
   reviewed: {
     label: 'Reviewed',
-    cssVarBg: 'var(--color-info-light)',
-    cssVarText: 'var(--color-info-dark)',
-    cssVarBorder: 'var(--color-info-light)',
+    className: 'bg-[#E7F6EC] text-[#3BAA63] dark:bg-[#1a3e26] dark:text-[#4ade80]',
   },
   ai: {
     label: 'AI',
-    cssVarBg: 'var(--color-primary-50)',
-    cssVarText: 'var(--color-primary-600)',
-    cssVarBorder: 'var(--color-primary-100)',
+    className: 'bg-[#F4F0FF] text-[#8D6BE8] dark:bg-[#2c2640] dark:text-[#9b7df0]',
   },
   template: {
     label: 'Template',
-    cssVarBg: 'var(--color-warning-light)',
-    cssVarText: 'var(--color-warning-dark)',
-    cssVarBorder: 'var(--color-warning-light)',
+    className: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
   },
 };
 
@@ -41,12 +31,7 @@ export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider ${className}`}
-      style={{
-        backgroundColor: config.cssVarBg,
-        color: config.cssVarText,
-        border: `1px solid ${config.cssVarBorder}`,
-      }}
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider border-[2px] border-black dark:border-white shadow-[1px_1px_0px_#000] dark:shadow-[1px_1px_0px_#fff] ${config.className} ${className}`}
     >
       {config.label}
     </span>

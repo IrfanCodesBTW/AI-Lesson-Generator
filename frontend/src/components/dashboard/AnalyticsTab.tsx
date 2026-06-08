@@ -23,56 +23,41 @@ export function AnalyticsTab() {
         >
           <div className="space-y-6">
             {/* AI Generated Bar */}
-            <div>
-              <div className="flex justify-between text-xs font-semibold mb-2">
-                <span
-                  className="flex items-center gap-1"
-                  style={{ color: 'var(--color-primary-600)' }}
-                >
-                  <Sparkles className="h-3 w-3" /> AI Generated (Gemini)
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-black">
+                <span className="flex items-center gap-1 text-[#8D6BE8]">
+                  <Sparkles className="h-3.5 w-3.5 stroke-[2.5]" /> AI Generated (Gemini)
                 </span>
-                <span style={{ color: 'var(--color-text-secondary)' }}>
-                  {getAiCount()} / {lessons.total} Plans
+                <span className="text-text-secondary">
+                  {getAiCount()} / {lessons.total} Plans ({Math.round(aiPercentage)}%)
                 </span>
               </div>
-              <div
-                className="w-full rounded-full h-3 overflow-hidden"
-                style={{ backgroundColor: 'var(--color-hover)' }}
-              >
+              <div className="w-full rounded-full h-6 overflow-hidden border-[3px] border-black dark:border-white bg-[#f7f4ea] dark:bg-zinc-900 shadow-[1px_1px_0px_#000] dark:shadow-[1px_1px_0px_#fff]">
                 <div
-                  className="h-3 rounded-full transition-all duration-700 ease-out"
+                  className={`h-full transition-all duration-700 ease-out bg-[#8D6BE8] ${aiPercentage > 0 ? 'border-r-[3px] border-black dark:border-white' : ''}`}
                   style={{
                     width: `${aiPercentage}%`,
-                    background:
-                      'linear-gradient(135deg, var(--color-primary-500), var(--color-primary-400))',
                   }}
                 />
               </div>
             </div>
 
             {/* Template Bar */}
-            <div>
-              <div className="flex justify-between text-xs font-semibold mb-2">
-                <span
-                  className="flex items-center gap-1"
-                  style={{ color: 'var(--color-warning-dark)' }}
-                >
-                  <Layers className="h-3 w-3" /> Local Backup Templates
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-black">
+                <span className="flex items-center gap-1 text-[#E6BD19]">
+                  <Layers className="h-3.5 w-3.5 stroke-[2.5]" /> Local Backup Templates
                 </span>
-                <span style={{ color: 'var(--color-text-secondary)' }}>
-                  {lessons.total - getAiCount()} / {lessons.total} Plans
+                <span className="text-text-secondary">
+                  {lessons.total - getAiCount()} / {lessons.total} Plans (
+                  {Math.round(templatePercentage)}%)
                 </span>
               </div>
-              <div
-                className="w-full rounded-full h-3 overflow-hidden"
-                style={{ backgroundColor: 'var(--color-hover)' }}
-              >
+              <div className="w-full rounded-full h-6 overflow-hidden border-[3px] border-black dark:border-white bg-[#f7f4ea] dark:bg-zinc-900 shadow-[1px_1px_0px_#000] dark:shadow-[1px_1px_0px_#fff]">
                 <div
-                  className="h-3 rounded-full transition-all duration-700 ease-out"
+                  className={`h-full transition-all duration-700 ease-out bg-[#FFD633] ${templatePercentage > 0 ? 'border-r-[3px] border-black dark:border-white' : ''}`}
                   style={{
                     width: `${templatePercentage}%`,
-                    background:
-                      'linear-gradient(135deg, var(--color-warning), var(--color-warning-dark))',
                   }}
                 />
               </div>
@@ -82,36 +67,20 @@ export function AnalyticsTab() {
 
         {/* Weekly Summary */}
         <SectionCard title="Weekly Summary">
-          <div className="space-y-4 text-xs">
-            <div
-              className="flex justify-between py-2"
-              style={{ borderBottom: '1px solid var(--color-border)' }}
-            >
-              <span className="font-semibold" style={{ color: 'var(--color-text-secondary)' }}>
-                Total Plans Created
-              </span>
-              <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                {lessons.total}
-              </span>
+          <div className="space-y-4 text-xs font-semibold">
+            <div className="flex justify-between py-2 border-b-[2px] border-black dark:border-white">
+              <span className="text-text-secondary">Total Plans Created</span>
+              <span className="font-black text-text-primary">{lessons.total}</span>
             </div>
-            <div
-              className="flex justify-between py-2"
-              style={{ borderBottom: '1px solid var(--color-border)' }}
-            >
-              <span className="font-semibold" style={{ color: 'var(--color-text-secondary)' }}>
-                Exports Active
-              </span>
-              <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>
+            <div className="flex justify-between py-2 border-b-[2px] border-black dark:border-white">
+              <span className="text-text-secondary">Exports Active</span>
+              <span className="font-black text-text-primary">
                 {parseInt(localStorage.getItem('export_count') || '0', 10)}
               </span>
             </div>
             <div className="flex justify-between py-2">
-              <span className="font-semibold" style={{ color: 'var(--color-text-secondary)' }}>
-                Active Age Bands
-              </span>
-              <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                4 Bands (Ages 2-6)
-              </span>
+              <span className="text-text-secondary">Active Age Bands</span>
+              <span className="font-black text-text-primary">4 Bands (Ages 2-6)</span>
             </div>
           </div>
         </SectionCard>

@@ -20,13 +20,7 @@ export function LibraryTab() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Search Bar */}
-      <div
-        className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl shadow-sm"
-        style={{
-          backgroundColor: 'var(--color-card)',
-          border: '1px solid var(--color-border)',
-        }}
-      >
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-[20px] border-[4px] border-black dark:border-white bg-card shadow-card">
         <SearchInput
           value={filter}
           onChange={setFilter}

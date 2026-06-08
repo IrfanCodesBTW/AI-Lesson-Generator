@@ -35,13 +35,10 @@ export function SettingsTab() {
           </div>
 
           <div className="pt-2">
-            <span
-              className="block text-xs font-bold uppercase tracking-wider mb-2"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
+            <span className="block text-xs font-black uppercase tracking-wider mb-2 text-text-secondary">
               Environment API Token Configuration
             </span>
-            <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="text-xs font-semibold leading-relaxed text-text-secondary">
               Your API request environment uses the credentials configured in the server&apos;s
               `.env` setup. To modify Gemini models or timeout thresholds, consult your
               administrator.

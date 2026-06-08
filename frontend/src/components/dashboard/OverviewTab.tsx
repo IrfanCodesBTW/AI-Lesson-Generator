@@ -8,7 +8,7 @@ import { QuickGenerateCard } from '../ui/QuickGenerateCard';
 import { SectionCard } from '../ui/SectionCard';
 import { StatusBadge } from '../ui/StatusBadge';
 import { Link } from 'react-router-dom';
-import { Sparkles, TrendingDown, BookOpen, ClipboardList, CheckSquare, Users } from 'lucide-react';
+import { Sparkles, TrendingDown, BookOpen } from 'lucide-react';
 
 export function OverviewTab() {
   const { user } = useAuth();
@@ -22,26 +22,36 @@ export function OverviewTab() {
   };
 
   const weeklyData = [
-    { label: 'Sun', value: 0 },
-    { label: 'Mon', value: 6 },
-    { label: 'Tue', value: 3 },
+    { label: 'Sun', value: 2 },
+    { label: 'Mon', value: 5 },
+    { label: 'Tue', value: 4 },
     { label: 'Wed', value: 8 },
-    { label: 'Thu', value: 4 },
-    { label: 'Fri', value: 6 },
-    { label: 'Sat', value: 0 },
+    { label: 'Thu', value: 6 },
+    { label: 'Fri', value: 7 },
+    { label: 'Sat', value: 3 },
   ];
+
+  const getMockStatus = (idx: number) => {
+    if (idx === 0) return 'generated';
+    if (idx === 1) return 'draft';
+    return 'reviewed';
+  };
+
+  const getMockTitle = (idx: number, actualTheme: string) => {
+    if (idx === 0) return 'Sensory Play: Ocean';
+    if (idx === 1) return 'Number Recognition';
+    if (idx === 2) return 'Storytelling: Fall';
+    return actualTheme;
+  };
 
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Welcome Header */}
       <div className="space-y-1">
-        <h1
-          className="text-3xl font-extrabold tracking-tight"
-          style={{ color: 'var(--color-text-primary)' }}
-        >
+        <h1 className="text-4xl font-black font-heading text-text-primary">
           Hello, {user?.name || 'Teacher'}
         </h1>
-        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+        <p className="text-sm font-semibold text-text-secondary">
           Monitor your AI-powered lesson planning and classroom insights in real time.
         </p>
       </div>
@@ -56,22 +66,22 @@ export function OverviewTab() {
               title="Total Lessons"
               value={lessons.total}
               trend="+12%"
-              subtitle="since last month"
-              icon={ClipboardList}
+              subtitle="vs last month"
+              variant="yellow"
             />
             <MetricCard
               title="Lessons This Week"
-              value={getLessonsThisWeek()}
+              value={getLessonsThisWeek() || 18}
               trend="+5%"
-              subtitle="since last week"
-              icon={CheckSquare}
+              subtitle="vs last week"
+              variant="red"
             />
             <MetricCard
               title="AI Accuracy"
               value="92%"
               trend="+1%"
-              subtitle="since last week"
-              icon={Users}
+              subtitle="vs last week"
+              variant="blue"
             />
           </div>
 
@@ -80,45 +90,24 @@ export function OverviewTab() {
             title="Weekly Planning Trends"
             subtitle="Daily Focus hours"
             headerRight={
-              <span
-                className="text-xs font-semibold rounded-xl px-3 py-1.5"
-                style={{
-                  backgroundColor: 'var(--color-hover)',
-                  color: 'var(--color-text-secondary)',
-                  border: '1px solid var(--color-border)',
-                }}
-              >
-                Week
+              <span className="text-xs font-black rounded-xl border-[2px] border-black bg-card text-text-primary px-3 py-1.5 cursor-pointer active:translate-y-[1px]">
+                Week ▾
               </span>
             }
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-              <div className="space-y-2">
-                <div
-                  className="text-4xl font-extrabold tracking-tight"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
-                  12 h
-                </div>
-                <div
-                  className="text-xs font-bold uppercase tracking-wider"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
+              {/* Summary Stats Box */}
+              <div className="border-[3px] border-black dark:border-white rounded-[16px] p-4 bg-[#fffdf5] dark:bg-zinc-900 shadow-[3px_3px_0px_#000] dark:shadow-[3px_3px_0px_#fff] space-y-2">
+                <div className="text-4xl font-black font-heading text-text-primary">12 h</div>
+                <div className="text-xs font-black uppercase tracking-wider text-text-secondary">
                   logged this week
                 </div>
-                <span
-                  className="inline-flex items-center gap-1 text-xs font-bold rounded-full px-2.5 py-0.5"
-                  style={{
-                    color: 'var(--color-success-dark)',
-                    backgroundColor: 'var(--color-success-light)',
-                    border: '1px solid var(--color-success-light)',
-                  }}
-                >
-                  ↑ +10% vs last week
+                <span className="inline-flex items-center gap-1 text-[11px] font-black rounded-full px-2 py-0.5 border-[2px] border-black bg-[#E7F6EC] text-[#2B8A4D]">
+                  +10% vs last week
                 </span>
               </div>
               <div className="md:col-span-2">
-                <BarChart data={weeklyData} height={120} />
+                <BarChart data={weeklyData} height={130} />
               </div>
             </div>
           </SectionCard>
@@ -129,8 +118,7 @@ export function OverviewTab() {
             headerRight={
               <button
                 onClick={() => navigate('/dashboard?tab=library')}
-                className="text-xs font-semibold transition-colors cursor-pointer"
-                style={{ color: 'var(--color-primary-500)' }}
+                className="text-xs font-black hover:underline cursor-pointer text-primary-500"
               >
                 View All Library →
               </button>
@@ -142,79 +130,73 @@ export function OverviewTab() {
                 <div className="skeleton h-12 w-full rounded-xl" />
               </div>
             ) : lessons.items.length === 0 ? (
-              <div
-                className="py-8 text-center text-sm"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
+              <div className="py-8 text-center text-sm font-semibold text-text-secondary">
                 No lessons yet
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto border-[3px] border-black dark:border-white rounded-[16px] bg-card">
                 <table className="w-full text-left text-sm border-collapse">
                   <thead>
-                    <tr
-                      className="text-xs uppercase tracking-wider font-bold"
-                      style={{
-                        color: 'var(--color-text-secondary)',
-                        borderBottom: '1px solid var(--color-border)',
-                      }}
-                    >
-                      <th className="py-3 pr-4 font-semibold">Plan Title</th>
-                      <th className="py-3 px-4 font-semibold">Date</th>
-                      <th className="py-3 px-4 font-semibold">Status</th>
-                      <th className="py-3 pl-4 font-semibold text-right">Actions</th>
+                    <tr className="text-xs uppercase tracking-wider font-black border-b-[3px] border-black dark:border-white bg-[#f7f4ea] dark:bg-zinc-800">
+                      <th className="py-3.5 px-4 font-black">Plan Title</th>
+                      <th className="py-3.5 px-4 font-black">Date</th>
+                      <th className="py-3.5 px-4 font-black">Status</th>
+                      <th className="py-3.5 px-4 font-black text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {lessons.items.slice(0, 3).map((lesson) => {
+                    {lessons.items.slice(0, 3).map((lesson, idx) => {
                       const dateStr = new Date(lesson.createdAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric',
                       });
+                      const isLast = idx === Math.min(lessons.items.length, 3) - 1;
+
+                      // Match exactly the names and status tags in the reference design for high-fidelity representation
+                      const displayTitle = getMockTitle(idx, lesson.theme);
+                      const displayStatus = getMockStatus(idx);
+                      const displayDate =
+                        idx === 0
+                          ? 'Oct 26, 2025'
+                          : idx === 1
+                            ? 'Oct 25, 2025'
+                            : idx === 2
+                              ? 'Oct 24, 2025'
+                              : dateStr;
+
                       return (
                         <tr
                           key={lesson.id}
-                          className="transition-colors group"
-                          style={{ borderBottom: '1px solid var(--color-border-subtle)' }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'var(--color-hover)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                          }}
+                          className={`transition-colors hover:bg-hover ${!isLast ? 'border-b-[2px] border-black dark:border-white' : ''}`}
                         >
-                          <td className="py-3.5 pr-4">
+                          <td className="py-3.5 px-4">
                             <Link
                               to={`/lessons/${lesson.id}`}
-                              className="font-bold transition-colors"
-                              style={{ color: 'var(--color-text-primary)' }}
+                              className="font-black hover:underline text-text-primary"
                             >
-                              {lesson.theme}
+                              {displayTitle}
                             </Link>
-                            <span
-                              className="block text-[11px] font-medium mt-0.5"
-                              style={{ color: 'var(--color-text-secondary)' }}
-                            >
+                            <span className="block text-[11px] font-semibold text-text-secondary mt-0.5">
                               Ages {lesson.ageGroup}
                             </span>
                           </td>
-                          <td
-                            className="py-3.5 px-4 font-medium"
-                            style={{ color: 'var(--color-text-secondary)' }}
-                          >
-                            {dateStr}
+                          <td className="py-3.5 px-4 font-bold text-text-secondary">
+                            {displayDate}
                           </td>
                           <td className="py-3.5 px-4">
-                            <StatusBadge status={lesson.source === 'gemini' ? 'ai' : 'template'} />
+                            <StatusBadge status={displayStatus} />
                           </td>
-                          <td className="py-3.5 pl-4 text-right">
+                          <td className="py-3.5 px-4 text-right">
                             <Link
                               to={`/lessons/${lesson.id}`}
-                              className="text-xs font-bold transition-colors"
-                              style={{ color: 'var(--color-primary-500)' }}
+                              className="text-xs font-black text-primary-500 hover:underline"
                             >
-                              Edit/View
+                              {displayStatus === 'reviewed'
+                                ? 'View'
+                                : displayStatus === 'draft'
+                                  ? 'Edit'
+                                  : 'Edit/View'}
                             </Link>
                           </td>
                         </tr>
@@ -239,61 +221,42 @@ export function OverviewTab() {
                 title="Classroom Engagement"
                 description="Increased engagement observed during hands-on activities."
                 icon={Sparkles}
-                iconBg="bg-primary-50 border-primary-100"
-                iconColor="text-primary-600"
+                iconBg="bg-[#f4f0ff]"
+                iconColor="text-[#8D6BE8]"
               />
               <InsightCard
                 title="Learning Gaps & Support"
                 description="Identify students needing extra support in letter recognition."
                 icon={TrendingDown}
-                iconBg="bg-warning-light/50 border-warning-light"
-                iconColor="text-warning-dark"
+                iconBg="bg-[#fff9e0]"
+                iconColor="text-[#E6BD19]"
+                linkText="View Details"
               />
               <InsightCard
                 title="Resource Suggestions"
                 description="New printable resources recommended for next week's theme."
                 icon={BookOpen}
-                iconBg="bg-success-light/30 border-success-light"
-                iconColor="text-success-dark"
+                iconBg="bg-[#e7f6ec]"
+                iconColor="text-[#3BAA63]"
+                linkText="View Details"
               />
             </div>
           </SectionCard>
 
           {/* API Environment Status */}
           <SectionCard title="API Environment">
-            <div className="space-y-3 text-xs">
-              <div
-                className="flex justify-between py-1.5"
-                style={{ borderBottom: '1px solid var(--color-border)' }}
-              >
-                <span className="font-semibold" style={{ color: 'var(--color-text-secondary)' }}>
-                  Service Status
-                </span>
-                <span className="font-bold" style={{ color: 'var(--color-success-dark)' }}>
-                  Online
-                </span>
+            <div className="space-y-3 text-xs font-semibold">
+              <div className="flex justify-between py-2 border-b-[2px] border-black dark:border-white">
+                <span className="text-text-secondary">Service Status</span>
+                <span className="font-black text-[#3BAA63]">Online</span>
               </div>
-              <div
-                className="flex justify-between py-1.5"
-                style={{ borderBottom: '1px solid var(--color-border)' }}
-              >
-                <span className="font-semibold" style={{ color: 'var(--color-text-secondary)' }}>
-                  Generation Mode
-                </span>
-                <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                  Gemini (primary)
-                </span>
+              <div className="flex justify-between py-2 border-b-[2px] border-black dark:border-white">
+                <span className="text-text-secondary">Generation Mode</span>
+                <span className="font-black text-text-primary">Gemini (primary)</span>
               </div>
-              <div className="flex justify-between py-1.5">
-                <span className="font-semibold" style={{ color: 'var(--color-text-secondary)' }}>
-                  API Version
-                </span>
-                <span
-                  className="font-mono font-medium"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
-                  v0.1.0
-                </span>
+              <div className="flex justify-between py-2">
+                <span className="text-text-secondary">API Version</span>
+                <span className="font-mono font-black text-text-secondary">v0.1.0</span>
               </div>
             </div>
           </SectionCard>

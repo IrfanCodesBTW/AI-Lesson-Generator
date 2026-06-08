@@ -79,6 +79,7 @@ export default {
 
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        heading: ['"Bree Serif"', '"Roboto Slab"', 'serif'],
       },
       fontSize: {
         display: ['3rem', { lineHeight: '3.5rem', fontWeight: '800' }],
