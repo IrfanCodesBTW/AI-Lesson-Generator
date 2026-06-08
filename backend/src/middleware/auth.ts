@@ -67,6 +67,10 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
     if (!decoded || !decoded.sub || typeof decoded.sub !== 'string') {
       return next(new UnauthorizedError('Invalid or expired token'));
     }
+    if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+      logger.warn({ userId: decoded.sub }, 'requireAuth rejected expired token');
+      return next(new UnauthorizedError('Invalid or expired token'));
+    }
     const email = decoded.email as string | undefined;
     const name =
       (decoded.user_metadata as { name?: string } | undefined)?.name ||
