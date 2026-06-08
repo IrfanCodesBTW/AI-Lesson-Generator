@@ -72,7 +72,8 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
     if (!decoded || !decoded.sub || typeof decoded.sub !== 'string') {
       return next(new UnauthorizedError('Invalid or expired token'));
     }
-    if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+    const skewTolerance = 300; // 5 minutes in seconds
+    if (decoded.exp && Date.now() >= (decoded.exp + skewTolerance) * 1000) {
       logger.warn({ userId: decoded.sub }, 'requireAuth rejected expired token');
       return next(new UnauthorizedError('Invalid or expired token'));
     }
